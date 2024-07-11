@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>  
+  <head>    
+    <meta charset="utf-8">    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">        
+    <title>Ubuntu Terminal</title>    
+    <meta name="description" content="">    
+    <meta name="viewport" content="width=device-width, initial-scale=1">    
+    <link rel="stylesheet" type="text/css" href="style.css"/>
+  </head>  
+  <body>  
+    <main id="container">
+      <div id="terminal">
+        <!-- Terminal Bar -->       
+        <section id="terminal__bar">          
+          <div id="bar__buttons">            
+            <button class="bar__button" id="bar__button--exit">&#10005;</button>            
+            <button class="bar__button">&#9472;</button>                
+            <button class="bar__button">&#9723;</button>          
+          </div>          
+          <p id="bar__user">fobabs@ubuntu: ~</p>        
+        </section>        
+        <!-- Terminal Body -->        
+        <section id="terminal__body">          
+          <div id="terminal__prompt">            
+            <span id="terminal__prompt--user">fobabs@ubuntu:</span>            
+            <span id="terminal__prompt--location">~</span>            
+            <span id="terminal__prompt--bling">$</span>            
+            <input type="text" id="terminal__input" autofocus>          
+          </div>        
+        </section>      
+      </div>    
+    </main>
+    <footer>
+      <p>&copy;**note UI credit goes to <a href="https://fobabs.medium.com/">Fobabs</a> 2024 Christian Rogers | <a href="../kjv">KJV</a></p>
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        const inputField = document.getElementById("terminal__input");
+        const terminalBody = document.getElementById("terminal__body");
+
+        inputField.addEventListener("keydown", function(event) {
+          if (event.key === "Enter") {
+            const command = inputField.value.trim();
+            processCommand(command);
+            inputField.value = "";
+          }
+        });
+
+        function processCommand(command) {
+          let output = "";
+          switch (command) {
+            case "ls":
+              output = "Desktop Documents Downloads Music Pictures Videos";
+              break;
+            case "pwd":
+              output = "/home/fobabs";
+              break;
+            case "clear":
+              terminalBody.innerHTML = '<div id="terminal__prompt"><span id="terminal__prompt--user">fobabs@ubuntu:</span><span id="terminal__prompt--location">~</span><span id="terminal__prompt--bling">$</span><input type="text" id="terminal__input" autofocus></div>';
+              return;
+            default:
+              output = `command not found: ${command}`;
+          }
+
+          const commandOutput = document.createElement("div");
+          commandOutput.classList.add("terminal__output");
+          commandOutput.innerHTML = `<span>${output}</span>`;
+          terminalBody.insertBefore(commandOutput, terminalBody.firstChild);
+        }
+      });
+    </script>
+  </body>
+</html>
