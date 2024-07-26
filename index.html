@@ -1,101 +1,157 @@
+
 <!DOCTYPE html>
-<html>  
-  <head> 
-    <link rel="icon" type="image/png" href="https://img.icons8.com/ios-filled/50/b.png">   
-    <meta charset="utf-8">    
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">        
-    <title>Ubuntu Terminal</title>    
-    <meta name="description" content="">    
-    <meta name="viewport" content="width=device-width, initial-scale=1">    
+<html>
+<head>
+    <link rel="icon" type="image/png" href="https://img.icons8.com/ios-filled/50/b.png">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>LINUX VM</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="style.css"/>
-  </head>  
-  <body>  
+</head>
+<body>
     <main id="container">
-      <div id="terminal">
-        <!-- Terminal Bar -->       
-        <section id="terminal__bar">          
-          <div id="bar__buttons">            
-            <button class="bar__button" id="bar__button--exit">&#10005;</button>            
-            <button class="bar__button">&#9472;</button>                
-            <button class="bar__button">&#9723;</button>          
-          </div>          
-          <p id="bar__user">user@bradensbay.com: ~</p>        
-        </section>        
-        <!-- Terminal Body -->        
-        <section id="terminal__body">          
-          <div id="terminal__prompt">            
-            <span id="terminal__prompt--user">user@bradensbay.com:</span>            
-            <span id="terminal__prompt--location">~</span>            
-            <span id="terminal__prompt--bling">$</span>            
-            <input type="text" id="terminal__input" autofocus>          
-          </div>        
-        </section>      
-      </div>    
+        <div id="terminal">
+            <!-- Terminal Bar -->
+            <section id="terminal__bar">
+                <div id="bar__buttons">
+                    <button class="bar__button" id="bar__button--exit">&#10005;</button>
+                    <button class="bar__button">&#9472;</button>
+                    <button class="bar__button">&#9723;</button>
+                </div>
+                <p id="bar__user">user@bradensbay.com ~</p>
+            </section>
+            <!-- Terminal Body -->
+            <section id="terminal__body">
+                <div id="terminal__prompt">
+                    <span id="terminal__prompt--user">username:</span>
+                    <span id="terminal__prompt--location">~</span>
+                    <span id="terminal__prompt--bling">$</span>
+                    <input type="text" id="terminal__input" autofocus>
+                </div>
+            </section>
+        </div>
     </main>
+    <script type="module">
+        // Import the necessary Firebase functions
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-analytics.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
 
-    <script>
-     document.addEventListener("DOMContentLoaded", function() {
-        let inputField = document.getElementById("terminal__input");
-        const terminalBody = document.getElementById("terminal__body");
-        let count = 0;
-	processCommand("c");
-        inputField.addEventListener("keydown", function(event) {
-          if (event.key === "Enter") {
-            count += 1;
-            const command = inputField.value.trim();
-            processCommand(command);
-            inputField.value = "";
-            if (count >= 15) {
-              processCommand("clear");
-              count = 0;
-            }
-          }
-        });
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDmdf8NhoFAzXKGuBWYq5XoDrM5eNClgOg",
+            authDomain: "bradensbay-1720893101514.firebaseapp.com",
+            projectId: "bradensbay-1720893101514",
+            storageBucket: "bradensbay-1720893101514.appspot.com",
+            messagingSenderId: "280971564912",
+            appId: "1:280971564912:web:989fff5191d0512c1b21b5",
+            measurementId: "G-DNJS8CVKWD"
+        };
 
-        function processCommand(command) {
-          let output = "";
-          switch (command) {
-	    case "c":
-	      output = "                                                                                                  ____                _                _<br> |  _ \\              | |              | |<br> | |_) |_ __ __ _  __| | ___ _ __  ___| |__   __ _ _   _   ___ ___  _ __ ___<br> |  _ <| '__/ _` |/ _` |/ _ \\ '_ \\/ __| '_ \\ / _` | | | | / __/ _ \\| '_ ` _ \\<br> | |_) | | | (_| | (_| |  __/ | | \\__ \\ |_) | (_| | |_| || (_| (_) | | | | | |<br> |____/|_|  \\__,_|\\__,_|\\___|_| |_|___/_.__/ \\__,_|\\__, (_)___\\___/|_| |_| |_|<br>                                                    __/ |<br>                                                   |___/<br><p>#####UI credit goes to <a href='https://fobabs.medium.com/'>Fobabs</a> &copy; 2024 Christian Rogers Bradensbay | <a href='../kjv'>KJV</a>#####<br><br><br>";
-              break;
-	    case "ls":
-              output = "Desktop Documents Downloads Music Pictures Videos";
-              break;
-            case "pwd":
-              output = "/home/user";
-              break;
-            case "clear":
-              terminalBody.innerHTML = `<div id="terminal__prompt">
-                <span id="terminal__prompt--user">user@bradensbay.com:</span>
-                <span id="terminal__prompt--location">~</span>
-                <span id="terminal__prompt--bling">$</span>
-                <input type="text" id="terminal__input" autofocus>
-              </div>`;
-	      document.getElementById("terminal__input").focus();
-              inputField = document.getElementById("terminal__input");
-              inputField.addEventListener("keydown", function(event) {
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth(app);
+
+        document.addEventListener("DOMContentLoaded", () => {
+            let inputField = document.getElementById("terminal__input");
+            const terminalBody = document.getElementById("terminal__body");
+            let count = 0;
+            let email = "";
+            let password = "";
+            let login = false;
+            let state = "awaitingEmail";
+
+            processCommand("c");
+
+            inputField.addEventListener("keydown", (event) => {
                 if (event.key === "Enter") {
-                  count += 1;
-                  const command = inputField.value.trim();
-                  processCommand(command);
-                  inputField.value = "";
-                  if (count >= 30) {
-                    processCommand("clear");
-                    count = 0;
-                  }
+                    count++;
+                    const command = inputField.value.trim();
+                    processCommand(command);
+                    inputField.value = "";
+                    if (count >= 15) {
+                        processCommand("clear");
+                        count = 0;
+                    }
                 }
-              });
-              return;
-            default:
-              output = `command not found: ${command}`;
-          }
+            });
 
-          const commandOutput = document.createElement("div");
-          commandOutput.classList.add("terminal__output");
-          commandOutput.innerHTML = `<span>${output}</span>`;
-          terminalBody.insertBefore(commandOutput, document.getElementById("terminal__prompt"));
-        }
-      });
+            function processCommand(command) {
+                if (state === "awaitingEmail" && command !== "c") {
+                    email = command;
+                    state = "awaitingPassword";
+                    document.getElementById("terminal__prompt--user").innerText = "password:";
+		    
+                    return;
+                }
+                if (state === "awaitingPassword" && command !== "c") {
+                    password = command;
+                    loginUser();
+                    return;
+                }
+                if (state === "loggedIn" || command === "c") {
+                    executeCommand(command);
+                }
+            }
+
+            function loginUser() {
+                signInWithEmailAndPassword(auth, email, password)
+                    .then((userCredential) => {
+			const userId = userCredential.user.uid;
+			console.log(`User ID: ${userId}`);                        
+			login = true;
+                        state = "loggedIn";
+                        document.getElementById("terminal__prompt--user").innerText = email;
+			document.getElementById("bar__user").innerText = email;
+                    })
+                    .catch(error => {
+                        console.error(error);
+			//location.reload();
+                    });
+            }
+
+            function executeCommand(command) {
+                let output = "";
+                switch (command) {
+                    case "c":
+                        output = "╔╗ ┬─┐┌─┐┌┬┐┌─┐┌┐┌┌─┐╔╗ ┌─┐┬ ┬<br>╠╩╗├┬┘├─┤ ││├┤ │││└─┐╠╩╗├─┤└┬┘<br>╚═╝┴└─┴ ┴─┴┘└─┘┘└┘└─┘╚═╝┴ ┴ ┴ <br><br> /////////////////////////////////////////////////////////<br> MIT License<br>Copyright (c) 2024 Christian Rogers<br>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the 'Software'), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:<br>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.<br>THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.";
+                        break;
+                    case "clear":
+                        terminalBody.innerHTML = `
+                            <div id="terminal__prompt">
+                                <span id="terminal__prompt--user">${login ? email : ""}</span>
+                                <span id="terminal__prompt--location">~</span>
+                                <span id="terminal__prompt--bling">$</span>
+                                <input type="text" id="terminal__input" autofocus>
+                            </div>`;
+                        document.getElementById("terminal__input").focus();
+                        inputField = document.getElementById("terminal__input");
+                        inputField.addEventListener("keydown", (event) => {
+                            if (event.key === "Enter") {
+                                count++;
+                                const command = inputField.value.trim();
+                                processCommand(command);
+                                inputField.value = "";
+                                if (count >= 30) {
+                                    processCommand("clear");
+                                    count = 0;
+                                }
+                            }
+                        });
+                        return;
+                    default:
+                        output = `Command not found: ${command}`;
+                }
+
+                const commandOutput = document.createElement("div");
+                commandOutput.classList.add("terminal__output");
+                commandOutput.innerHTML = `<span>${output}</span>`;
+                terminalBody.insertBefore(commandOutput, document.getElementById("terminal__prompt"));
+            }
+        });
     </script>
-  </body>
+</body>
 </html>
