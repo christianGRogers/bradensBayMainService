@@ -5,7 +5,7 @@
     <link rel="icon" type="image/png" href="https://img.icons8.com/ios-filled/50/b.png">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>LINUX VM</title>
+    <title>Ubuntu Terminal</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="style.css"/>
@@ -84,7 +84,6 @@
                     email = command;
                     state = "awaitingPassword";
                     document.getElementById("terminal__prompt--user").innerText = "password:";
-		    
                     return;
                 }
                 if (state === "awaitingPassword" && command !== "c") {
@@ -99,17 +98,15 @@
 
             function loginUser() {
                 signInWithEmailAndPassword(auth, email, password)
-                    .then((userCredential) => {
-			const userId = userCredential.user.uid;
-			console.log(`User ID: ${userId}`);                        
-			login = true;
+                    .then(() => {
+                        login = true;
                         state = "loggedIn";
                         document.getElementById("terminal__prompt--user").innerText = email;
 			document.getElementById("bar__user").innerText = email;
                     })
                     .catch(error => {
                         console.error(error);
-			//location.reload();
+			location.reload();
                     });
             }
 
