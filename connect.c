@@ -14,6 +14,7 @@
 void runCommand(char *vmName, char *command, char *output);
 int start_connection();
 void url_decode(char *src, char *dest);
+int hex_to_int(char c);
 
 int main() {
     start_connection();
