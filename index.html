@@ -55,93 +55,39 @@
         const analytics = getAnalytics(app);
         const auth = getAuth(app);
         var userId = "";
-                async function sendCommand(vmName, command) {
-                          const url = 'http://bradensbay.com:8080'; // Replace with your server's address if different
+        async function sendCommand(vmName, command) {
+            const url = 'http://bradensbay.com:8080'; // Replace with your server's address if different
 
-                          // Create the data to be sent
-                          const postData = `vm=${encodeURIComponent(vmName)}&command=${encodeURIComponent(command)}`;
+            // Create the data to be sent
+            const postData = `vm=${encodeURIComponent(vmName)}&command=${encodeURIComponent(command)}`;
 
-                          try {
-                              // Send the POST request
-                              const response = await fetch(url, {
-                                  method: 'POST',
-                                  headers: {
-                                      'Content-Type': 'application/x-www-form-urlencoded'
-                                  },
-                                  body: postData
-                              });
+            try {
+                // Send the POST request
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: postData
+                });
 
-                              // Check if the response is OK
-                              if (!response.ok) {
-                                  throw new Error(`Server error: ${response.status}`);
-                              }
+                // Check if the response is OK
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status}`);
+                }
 
-                              // Get the response text
-                              const responseText = await response.text();
+                // Get the response text
+                const responseText = await response.text();
 
-                              // Output the response
-                              console.log('Command output:', responseText);
-                          } catch (error) {
-                              // Handle any errors
-                              console.error('Error:', error);
-                          }
-                          return responseText;
-                      }
-                      document.addEventListener("DOMContentLoaded", () => {
-                          let inputField = document.getElementById("terminal__input");
-                          const terminalBody = document.getElementById("terminal__body");
-                          let count = 0;
-                          let email = "";
-                          let password = "";
-                          let login = false;
-                          let state = "awaitingEmail";
-
-                          processCommand("c");
-
-                          inputField.addEventListener("keydown", (event) => {
-                              if (event.key === "Enter") {
-                                  count++;
-                                  const command = inputField.value.trim();
-                                  processCommand(command);
-                                  inputField.value = "";
-                                  if (count >= 15) {
-                                      processCommand("clear");
-                                      count = 0;
-                                  }
-                              }
-                          });
-
-                          function processCommand(command) {
-                              if (state === "awaitingEmail" && command !== "c") {
-                                  email = command;
-                                  state = "awaitingPassword";
-                                  document.getElementById("terminal__prompt--user").innerText = "password:";
-                                  return;
-                              }
-                              if (state === "awaitingPassword" && command !== "c") {
-                                  password = command;
-                                  loginUser();
-                                  return;
-                              }
-                              if (state === "loggedIn" || command === "c") {
-                                  executeCommand(command);
-                              }
-                          }
-
-                          function loginUser() {
-                              signInWithEmailAndPassword(auth, email, password)
-                                .then((userCredential) => {
-			                          userId = userCredential.user.uid;
-                                console.log(`User ID: ${userId}`);                        
-                                login = true;
-                                state = "loggedIn";
-                                document.getElementById("terminal__prompt--user").innerText = email;
-			                          document.getElementById("bar__user").innerText = email;
-                                })
-                                .catch(error => {
-                                  console.error(error);
-                                });
-                            }
+                // Output the response
+                console.log('Command output:', responseText);
+                return responseText;
+            } catch (error) {
+                // Handle any errors
+                console.error('Error:', error);
+                return null;
+            }
+        }
 
             function executeCommand(command) {
                 let output = "";
