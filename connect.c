@@ -17,6 +17,20 @@ int main() {
     start_connection();
     return 0;
 }
+void redir(const char *dest){
+        if(dest != NULL){
+                int fd = open(dest, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+                if (fd < 0) {
+                        perror("open");
+                        exit(1);
+                }
+                if (dup2(fd, STDOUT_FILENO) < 0) {
+                        perror("dup2");
+                        exit(1);
+                }
+                close(fd);
+        }
+}
 
 void runCommand(char *vmName, char *command, char *output) {
     int pipefd[2];
@@ -119,7 +133,7 @@ int start_connection() {
 
                 // Run the command in the container and get the output
                 runCommand(vm_name, command, content_buffer);
-
+                printf("///////////////////////////output:\n%s", content_buffer);
                 // Prepare response
                 char content_length[16];
                 snprintf(content_length, sizeof(content_length), "%ld", strlen(content_buffer));
