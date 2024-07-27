@@ -2,22 +2,44 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <arpa/inet.h>
 #include <sys/socket.h>
-#include <sys/types.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
+#include <sys/wait.h>
+
 #define PORT 8080
 #define BUFFER_SIZE 1024
 
-int start connection(){
+void runCommand(char *vmName, char *command);
+int start_connection();
+
+int main() {
+    start_connection();
+    return 0;
+}
+
+void runCommand(char *vmName, char *command) {
+    // Fork a new process to execute the command
+    if (fork() == 0) {
+        // Child process: execute the command
+        execlp("lxc", "lxc", "exec", vmName, "--", "sh", "-c", command, (char *)NULL);
+        perror("execlp failed");
+        exit(EXIT_FAILURE);
+    }
+    // Parent process: wait for the child to complete
+    wait(NULL);
+}
+
+int start_connection() {
     int server_fd, new_socket;
     struct sockaddr_in address;
     int opt = 1;
     int addrlen = sizeof(address);
     char buffer[BUFFER_SIZE] = {0};
     char *responseHeader = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 12\n\n";
+    char *response = "Command executed";
     char *content_buffer = malloc(BUFFER_SIZE);
-    
+
     // Creating socket file descriptor
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
         perror("socket failed");
@@ -59,16 +81,35 @@ int start connection(){
         read(new_socket, buffer, BUFFER_SIZE);
         printf("Received request:\n%s\n", buffer);
 
-        // Send response
-        write(new_socket, response, strlen(response));
-        printf("Response sent\n");
+        // Check if the request is a POST request
+        if (strncmp(buffer, "POST", 4) == 0) {
+            // Find the start of the POST data
+            char *post_data = strstr(buffer, "\r\n\r\n");
+            if (post_data) {
+                post_data += 4; // Skip the \r\n\r\n
+
+                // Extract VM name and command
+                char vm_name[256] = {0};
+                char command[256] = {0};
+                sscanf(post_data, "vm=%255[^&]&command=%255s", vm_name, command);
+
+                printf("VM Name: %s\n", vm_name);
+                printf("Command: %s\n", command);
+
+                // Run the command in the container
+                runCommand(vm_name, command);
+
+                // Send response
+                write(new_socket, responseHeader, strlen(responseHeader));
+                write(new_socket, response, strlen(response));
+                printf("Response sent\n");
+            }
+        }
 
         // Close the connection
         close(new_socket);
     }
-}
-int main() {
-    
 
-    return 0;
+    free(content_buffer);
 }
+
