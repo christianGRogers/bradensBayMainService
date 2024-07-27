@@ -6,12 +6,14 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/wait.h>
+#include <ctype.h>
 
 #define PORT 8080
 #define BUFFER_SIZE 1024
 
 void runCommand(char *vmName, char *command, char *output);
 int start_connection();
+void url_decode(char *src, char *dest);
 
 int main() {
     start_connection();
@@ -120,11 +122,17 @@ int start_connection() {
                 char command[256] = {0};
                 sscanf(post_data, "vm=%255[^&]&command=%255s", vm_name, command);
 
-                printf("VM Name: %s\n", vm_name);
-                printf("Command: %s\n", command);
+                // URL decode the VM name and command
+                char decoded_vm_name[256] = {0};
+                char decoded_command[256] = {0};
+                url_decode(vm_name, decoded_vm_name);
+                url_decode(command, decoded_command);
+
+                printf("VM Name: %s\n", decoded_vm_name);
+                printf("Command: %s\n", decoded_command);
 
                 // Run the command in the container and get the output
-                runCommand(vm_name, command, content_buffer);
+                runCommand(decoded_vm_name, decoded_command, content_buffer);
                 printf("///////////////////////////output:\n%s", content_buffer);
 
                 // Prepare response
@@ -140,5 +148,35 @@ int start_connection() {
 
         // Close the connection
         close(new_socket);
+    }
+}
+
+void url_decode(char *src, char *dest) {
+    char *p = dest;
+    while (*src) {
+        if (*src == '%') {
+            if (src[1] && src[2]) {
+                *p++ = (char)((hex_to_int(src[1]) << 4) | hex_to_int(src[2]));
+                src += 2;
+            }
+        } else if (*src == '+') {
+            *p++ = ' ';
+        } else {
+            *p++ = *src;
+        }
+        src++;
+    }
+    *p = '\0';
+}
+
+int hex_to_int(char c) {
+    if (c >= '0' && c <= '9') {
+        return c - '0';
+    } else if (c >= 'a' && c <= 'f') {
+        return c - 'a' + 10;
+    } else if (c >= 'A' && c <= 'F') {
+        return c - 'A' + 10;
+    } else {
+        return -1;
     }
 }
