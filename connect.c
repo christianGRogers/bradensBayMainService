@@ -58,7 +58,7 @@ int start_connection() {
     int opt = 1;
     int addrlen = sizeof(address);
     char buffer[BUFFER_SIZE] = {0};
-    char *responseHeader = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ";
+    char *responseHeader = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nAccess-Control-Allow-Origin: *\r\nContent-Length: ";
     char content_buffer[BUFFER_SIZE] = {0};
 
     // Creating socket file descriptor
@@ -132,7 +132,7 @@ int start_connection() {
                 snprintf(content_length, sizeof(content_length), "%lu", strlen(content_buffer));
                 write(new_socket, responseHeader, strlen(responseHeader));
                 write(new_socket, content_length, strlen(content_length));
-                write(new_socket, "\r\n\r\n", 4); // Header-body separator
+                write(new_socket, "\r\n\r\n", 4); // Correct header-body separator
                 write(new_socket, content_buffer, strlen(content_buffer));
                 printf("Response sent\n");
             }
@@ -142,4 +142,3 @@ int start_connection() {
         close(new_socket);
     }
 }
-
