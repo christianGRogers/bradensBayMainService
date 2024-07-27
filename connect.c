@@ -58,7 +58,7 @@ int start_connection() {
     int opt = 1;
     int addrlen = sizeof(address);
     char buffer[BUFFER_SIZE] = {0};
-    char *responseHeader = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: ";
+    char *responseHeader = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ";
     char content_buffer[BUFFER_SIZE] = {0};
 
     // Creating socket file descriptor
@@ -99,7 +99,13 @@ int start_connection() {
         }
 
         // Read the incoming request
-        read(new_socket, buffer, BUFFER_SIZE);
+        ssize_t bytesRead = read(new_socket, buffer, BUFFER_SIZE - 1);
+        if (bytesRead <= 0) {
+            perror("read");
+            close(new_socket);
+            continue;
+        }
+        buffer[bytesRead] = '\0'; // Null-terminate the buffer
         printf("Received request:\n%s\n", buffer);
 
         // Check if the request is a POST request
@@ -120,12 +126,13 @@ int start_connection() {
                 // Run the command in the container and get the output
                 runCommand(vm_name, command, content_buffer);
                 printf("///////////////////////////output:\n%s", content_buffer);
+
                 // Prepare response
                 char content_length[16];
-                snprintf(content_length, sizeof(content_length), "%ld", strlen(content_buffer));
+                snprintf(content_length, sizeof(content_length), "%lu", strlen(content_buffer));
                 write(new_socket, responseHeader, strlen(responseHeader));
                 write(new_socket, content_length, strlen(content_length));
-                write(new_socket, "\n\n", 2);
+                write(new_socket, "\r\n\r\n", 4); // Header-body separator
                 write(new_socket, content_buffer, strlen(content_buffer));
                 printf("Response sent\n");
             }
@@ -135,3 +142,4 @@ int start_connection() {
         close(new_socket);
     }
 }
+
