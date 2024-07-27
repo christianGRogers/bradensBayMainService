@@ -10,7 +10,7 @@
 #define PORT 8080
 #define BUFFER_SIZE 1024
 
-void runCommand(char *vmName, char *command);
+void runCommand(char *vmName, char *command, char *output);
 int start_connection();
 
 int main() {
@@ -18,16 +18,38 @@ int main() {
     return 0;
 }
 
-void runCommand(char *vmName, char *command) {
+void runCommand(char *vmName, char *command, char *output) {
+    int pipefd[2];
+    if (pipe(pipefd) == -1) {
+        perror("pipe failed");
+        exit(EXIT_FAILURE);
+    }
+
     // Fork a new process to execute the command
     if (fork() == 0) {
         // Child process: execute the command
+        close(pipefd[0]); // Close unused read end
+        dup2(pipefd[1], STDOUT_FILENO); // Redirect stdout to pipe
+        dup2(pipefd[1], STDERR_FILENO); // Redirect stderr to pipe
+        close(pipefd[1]); // Close write end after redirect
+
         execlp("lxc", "lxc", "exec", vmName, "--", "sh", "-c", command, (char *)NULL);
         perror("execlp failed");
         exit(EXIT_FAILURE);
+    } else {
+        // Parent process: read the output
+        close(pipefd[1]); // Close unused write end
+        wait(NULL); // Wait for the child to complete
+
+        ssize_t bytesRead = read(pipefd[0], output, BUFFER_SIZE - 1);
+        if (bytesRead >= 0) {
+            output[bytesRead] = '\0'; // Null-terminate the output
+        } else {
+            strcpy(output, "Failed to read command output");
+        }
+
+        close(pipefd[0]); // Close read end
     }
-    // Parent process: wait for the child to complete
-    wait(NULL);
 }
 
 int start_connection() {
@@ -36,9 +58,8 @@ int start_connection() {
     int opt = 1;
     int addrlen = sizeof(address);
     char buffer[BUFFER_SIZE] = {0};
-    char *responseHeader = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 12\n\n";
-    char *response = "Command executed";
-    char *content_buffer = malloc(BUFFER_SIZE);
+    char *responseHeader = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: ";
+    char content_buffer[BUFFER_SIZE] = {0};
 
     // Creating socket file descriptor
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
@@ -96,12 +117,16 @@ int start_connection() {
                 printf("VM Name: %s\n", vm_name);
                 printf("Command: %s\n", command);
 
-                // Run the command in the container
-                runCommand(vm_name, command);
+                // Run the command in the container and get the output
+                runCommand(vm_name, command, content_buffer);
 
-                // Send response
+                // Prepare response
+                char content_length[16];
+                snprintf(content_length, sizeof(content_length), "%ld", strlen(content_buffer));
                 write(new_socket, responseHeader, strlen(responseHeader));
-                write(new_socket, response, strlen(response));
+                write(new_socket, content_length, strlen(content_length));
+                write(new_socket, "\n\n", 2);
+                write(new_socket, content_buffer, strlen(content_buffer));
                 printf("Response sent\n");
             }
         }
@@ -109,7 +134,4 @@ int start_connection() {
         // Close the connection
         close(new_socket);
     }
-
-    free(content_buffer);
 }
-
