@@ -15,12 +15,12 @@
         <input type="text" id="verification-code" placeholder="Verification Code" required>
         <button type="submit">Verify Code</button>
     </form>
-    
+
     <script type="module">
         // Import the necessary Firebase functions
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
-        
+        import { getAuth, createUserWithEmailAndPassword, RecaptchaVerifier, signInWithPhoneNumber, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+
         // Your Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDmdf8NhoFAzXKGuBWYq5XoDrM5eNClgOg",
@@ -31,6 +31,7 @@
             appId: "1:280971564912:web:989fff5191d0512c1b21b5",
             measurementId: "G-DNJS8CVKWD"
         };
+
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -45,17 +46,18 @@
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
 
+                // Send verification email
+                await sendEmailVerification(user);
+                console.log("Verification email sent.");
+
                 window.recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {}, auth);
                 window.recaptchaVerifier.render();
-
-                await user.sendEmailVerification();
-                console.log("Verification email sent.");
 
                 // Here we should add phone number input and handle 2FA with phone number
                 // For simplicity, let's assume we have a phone number
                 const phoneNumber = "+1234567890"; // Replace with actual phone number input
                 const appVerifier = window.recaptchaVerifier;
-                
+
                 const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
                 window.confirmationResult = confirmationResult;
                 document.getElementById('verify-code-form').style.display = 'block';
