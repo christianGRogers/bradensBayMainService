@@ -2,9 +2,7 @@
 <html>
 <head>
     <title>Signup with 2FA</title>
-    <script src="https://www.gstatic.com/firebasejs/9.19.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.19.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.19.1/firebase-firestore.js"></script>
+
 </head>
 <body>
     <h1>Signup with Two-Factor Authentication</h1>
@@ -20,7 +18,10 @@
     </form>
     
     <script type="module">
-        // Your Firebase configuration
+        // Import the necessary Firebase functions
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-analytics.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
         const firebaseConfig = {
             apiKey: "AIzaSyDmdf8NhoFAzXKGuBWYq5XoDrM5eNClgOg",
             authDomain: "bradensbay-1720893101514.firebaseapp.com",
