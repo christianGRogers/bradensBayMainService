@@ -139,6 +139,8 @@ button:hover {
 
 #terminal__prompt {
   display: flex;
+  align-items: center; /* Ensures all child elements are aligned vertically */
+  font-size: 14px; /* Ensure consistent font size */
 }
 
 #terminal__prompt--user {
@@ -157,7 +159,8 @@ button:hover {
   background-color: black;
   border: none;
   padding: 2px 8px;
-  width: calc(100% - 26px);
+  width: auto; /* Let flexbox handle the width */
+  flex-grow: 1; /* Allow input to grow and fill remaining space */
 }
 
 #terminal__input:focus {
