@@ -120,6 +120,10 @@ button:hover {
   background: linear-gradient(#f37458 0%, #de4c12 100%);
   background-clip: padding-box;
 }
+#bar__button--plus {
+  background: linear-gradient(hsl(103, 78%, 51%) 0%, #19d600 100%);
+  background-clip: padding-box;
+}
 
 #bar__user {
   color: #d5d0ce;
