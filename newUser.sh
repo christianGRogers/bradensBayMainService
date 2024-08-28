@@ -12,8 +12,8 @@ VM_NAME=$1
 echo "Creating LXD VM: $VM_NAME"
 
 lxc launch ubuntu:focal $VM_NAME --vm --config image.architecture=amd64 --config image.description="Ubuntu focal amd64 (20240724_0023)" --config image.os=Ubuntu --config image.release=focal --config image.serial="20240724_0023" --config image.type=disk-kvm.img --config image.variant=desktop
-# Wait for the VM to be fully initialized
-sleep 100
+# Wait for the VM to start (if it dose not start in 20 sec ur cooooked)
+sleep 20
 
 # Install Apache2 on the LXD VM
 echo "Installing Apache2 on the LXD VM: $VM_NAME"
