@@ -99,8 +99,8 @@
                         document.getElementById("bar__user").innerText = email;
                     })
                     .catch((error) => {
-                        console.error("Login failed:", error.message);
                         location.reload();
+                        console.error("Login failed:", error.message);
                     });
             }
 
