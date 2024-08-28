@@ -109,7 +109,7 @@
             });
     }
         async function sendCommand(vmName, command) {
-            const url = '10.0.0.67:8080'; 
+            const url = 'http://10.0.0.67:8080'; 
 
             // Create the data to be sent
             const postData = `vm=${encodeURIComponent(vmName)}&command=${encodeURIComponent(command)}`;
