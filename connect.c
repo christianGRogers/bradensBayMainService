@@ -11,7 +11,7 @@
 #define PORT 8080
 #define BUFFER_SIZE 1024
 
-void runCommand(char *vmName, char *command, char *output);
+void runSession(char *vmName, int client_fd);
 int start_connection();
 void url_decode(char *src, char *dest);
 int hex_to_int(char c);
@@ -21,37 +21,77 @@ int main() {
     return 0;
 }
 
-void runCommand(char *vmName, char *command, char *output) {
-    int pipefd[2];
-    if (pipe(pipefd) == -1) {
+void runSession(char *vmName, int client_fd) {
+    int toVmPipe[2];    // Pipe for sending commands to VM
+    int fromVmPipe[2];  // Pipe for receiving output from VM
+
+    if (pipe(toVmPipe) == -1 || pipe(fromVmPipe) == -1) {
         perror("pipe failed");
         exit(EXIT_FAILURE);
     }
 
-    // Fork a new process to execute the command
-    if (fork() == 0) {
-        // Child process: execute the command
-        close(pipefd[0]); // Close unused read end
-        dup2(pipefd[1], STDOUT_FILENO); // Redirect stdout to pipe
-        dup2(pipefd[1], STDERR_FILENO); // Redirect stderr to pipe
-        close(pipefd[1]); // Close write end after redirect
+    pid_t pid = fork();
+    if (pid == -1) {
+        perror("fork failed");
+        exit(EXIT_FAILURE);
+    }
 
-        execlp("lxc", "lxc", "exec", vmName, "--", "sh", "-c", command, (char *)NULL);
+    if (pid == 0) {
+        // Child process: set up pipes and execute shell on the VM
+        close(toVmPipe[1]);   // Close unused write end (parent writes here)
+        dup2(toVmPipe[0], STDIN_FILENO);  // Redirect stdin to pipe
+        close(toVmPipe[0]);
+
+        close(fromVmPipe[0]); // Close unused read end (parent reads here)
+        dup2(fromVmPipe[1], STDOUT_FILENO);  // Redirect stdout to pipe
+        dup2(fromVmPipe[1], STDERR_FILENO);  // Redirect stderr to pipe
+        close(fromVmPipe[1]);
+
+        execlp("lxc", "lxc", "exec", vmName, "--", "sh", (char *)NULL);
         perror("execlp failed");
         exit(EXIT_FAILURE);
     } else {
-        // Parent process: read the output
-        close(pipefd[1]); // Close unused write end
-        wait(NULL); // Wait for the child to complete
+        // Parent process: interact with the VM shell
+        close(toVmPipe[0]);  // Close unused read end
+        close(fromVmPipe[1]); // Close unused write end
 
-        ssize_t bytesRead = read(pipefd[0], output, BUFFER_SIZE - 1);
-        if (bytesRead >= 0) {
-            output[bytesRead] = '\0'; // Null-terminate the output
-        } else {
-            strcpy(output, "Failed to read command output");
+        char buffer[BUFFER_SIZE];
+        ssize_t bytesRead;
+        char vm_output[BUFFER_SIZE] = {0};
+
+        // Infinite loop to handle multiple commands
+        while (1) {
+            memset(buffer, 0, BUFFER_SIZE);
+
+            // Receive command from client
+            bytesRead = read(client_fd, buffer, BUFFER_SIZE - 1);
+            if (bytesRead <= 0) {
+                printf("Client disconnected\n");
+                break; // Exit the loop if client disconnects
+            }
+
+            buffer[bytesRead] = '\0'; // Null-terminate the command
+
+            // Write the command to the VM
+            write(toVmPipe[1], buffer, strlen(buffer));
+
+            // Read the output from the VM
+            bytesRead = read(fromVmPipe[0], vm_output, BUFFER_SIZE - 1);
+            if (bytesRead > 0) {
+                vm_output[bytesRead] = '\0';  // Null-terminate the output
+                printf("Output from VM:\n%s\n", vm_output);
+
+                // Send the VM output back to the client
+                write(client_fd, vm_output, strlen(vm_output));
+            }
         }
 
-        close(pipefd[0]); // Close read end
+        // Close pipes when done
+        close(toVmPipe[1]);
+        close(fromVmPipe[0]);
+
+        // Wait for the child process to terminate
+        wait(NULL);
     }
 }
 
@@ -118,32 +158,20 @@ int start_connection() {
             if (post_data) {
                 post_data += 4; // Skip the \r\n\r\n
 
-                // Extract VM name and command
+                // Extract VM name
                 char vm_name[256] = {0};
-                char command[256] = {0};
-                sscanf(post_data, "vm=%255[^&]&command=%255s", vm_name, command);
+                sscanf(post_data, "vm=%255s", vm_name);
 
-                // URL decode the VM name and command
+                // URL decode the VM name
                 char decoded_vm_name[256] = {0};
-                char decoded_command[256] = {0};
                 url_decode(vm_name, decoded_vm_name);
-                url_decode(command, decoded_command);
 
                 printf("VM Name: %s\n", decoded_vm_name);
-                printf("Command: %s\n", decoded_command);
 
-                // Run the command in the container and get the output
-                runCommand(decoded_vm_name, decoded_command, content_buffer);
-                printf("///////////////////////////output:\n%s", content_buffer);
+                // Start a persistent session with the VM
+                runSession(decoded_vm_name, new_socket);
 
-                // Prepare response
-                char content_length[16];
-                snprintf(content_length, sizeof(content_length), "%lu", strlen(content_buffer));
-                write(new_socket, responseHeader, strlen(responseHeader));
-                write(new_socket, content_length, strlen(content_length));
-                write(new_socket, "\r\n\r\n", 4); // Correct header-body separator
-                write(new_socket, content_buffer, strlen(content_buffer));
-                printf("Response sent\n");
+                printf("Session ended\n");
             }
         }
 
