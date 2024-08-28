@@ -5,66 +5,208 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <sys/wait.h>
+#include <ctype.h>
 
 #define PORT 8080
 #define BUFFER_SIZE 1024
 
-void send_command(int sockfd) {
-    char command[BUFFER_SIZE];
-    printf("Enter command (type 'exit' to quit): ");
-    while (fgets(command, sizeof(command), stdin)) {
-        // Remove newline character
-        command[strcspn(command, "\n")] = '\0';
+void runSession(char *vmName, int client_fd);
+int start_connection();
+void url_decode(char *src, char *dest);
+int hex_to_int(char c);
 
-        // Send command to server
-        send(sockfd, command, strlen(command), 0);
-        if (strcmp(command, "exit") == 0) {
-            break;
-        }
+int main() {
+    start_connection();
+    return 0;
+}
 
-        // Receive response from server
+void runSession(char *vmName, int client_fd) {
+    int toVmPipe[2];    // Pipe for sending commands to VM
+    int fromVmPipe[2];  // Pipe for receiving output from VM
+
+    if (pipe(toVmPipe) == -1 || pipe(fromVmPipe) == -1) {
+        perror("pipe failed");
+        exit(EXIT_FAILURE);
+    }
+
+    pid_t pid = fork();
+    if (pid == -1) {
+        perror("fork failed");
+        exit(EXIT_FAILURE);
+    }
+
+    if (pid == 0) {
+        // Child process: set up pipes and execute shell on the VM
+        close(toVmPipe[1]);   // Close unused write end (parent writes here)
+        dup2(toVmPipe[0], STDIN_FILENO);  // Redirect stdin to pipe
+        close(toVmPipe[0]);
+
+        close(fromVmPipe[0]); // Close unused read end (parent reads here)
+        dup2(fromVmPipe[1], STDOUT_FILENO);  // Redirect stdout to pipe
+        dup2(fromVmPipe[1], STDERR_FILENO);  // Redirect stderr to pipe
+        close(fromVmPipe[1]);
+
+        execlp("lxc", "lxc", "exec", vmName, "--", "sh", (char *)NULL);
+        perror("execlp failed");
+        exit(EXIT_FAILURE);
+    } else {
+        // Parent process: interact with the VM shell
+        close(toVmPipe[0]);  // Close unused read end
+        close(fromVmPipe[1]); // Close unused write end
+
         char buffer[BUFFER_SIZE];
-        ssize_t bytes_received = recv(sockfd, buffer, sizeof(buffer) - 1, 0);
-        if (bytes_received > 0) {
-            buffer[bytes_received] = '\0'; // Null-terminate the response
-            printf("Server response:\n%s\n", buffer);
-        } else {
-            printf("No response from server or error occurred\n");
-            break;
+        ssize_t bytesRead;
+
+        // Infinite loop to handle multiple commands
+        while (1) {
+            memset(buffer, 0, BUFFER_SIZE);
+
+            // Receive command from client
+            bytesRead = read(client_fd, buffer, BUFFER_SIZE - 1);
+            if (bytesRead <= 0) {
+                printf("Client disconnected\n");
+                break; // Exit the loop if client disconnects
+            }
+
+            buffer[bytesRead] = '\0'; // Null-terminate the command
+
+            // Write the command to the VM
+            write(toVmPipe[1], buffer, strlen(buffer));
+            write(toVmPipe[1], "\n", 1); // Ensure the command is executed
+
+            // Read the output from the VM
+            memset(buffer, 0, BUFFER_SIZE);
+            bytesRead = read(fromVmPipe[0], buffer, BUFFER_SIZE - 1);
+            if (bytesRead > 0) {
+                buffer[bytesRead] = '\0';  // Null-terminate the output
+                printf("Output from VM:\n%s\n", buffer);
+
+                // Send the VM output back to the client
+                write(client_fd, buffer, strlen(buffer));
+            }
         }
 
-        printf("Enter command (type 'exit' to quit): ");
+        // Close pipes when done
+        close(toVmPipe[1]);
+        close(fromVmPipe[0]);
+
+        // Wait for the child process to terminate
+        wait(NULL);
     }
 }
 
-int main() {
-    int sockfd;
-    struct sockaddr_in server_addr;
+int start_connection() {
+    int server_fd, new_socket;
+    struct sockaddr_in address;
+    int opt = 1;
+    int addrlen = sizeof(address);
+    char buffer[BUFFER_SIZE] = {0};
 
-    // Create socket
-    if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-        perror("Socket creation failed");
+    // Creating socket file descriptor
+    if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
+        perror("socket failed");
         exit(EXIT_FAILURE);
     }
 
-    // Specify the server address and port
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(PORT);
-    server_addr.sin_addr.s_addr = inet_addr("127.0.0.1"); // Assuming the server is on localhost
-
-    // Connect to the server
-    if (connect(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
-        perror("Connection failed");
+    // Forcefully attaching socket to the port
+    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))) {
+        perror("setsockopt");
         exit(EXIT_FAILURE);
     }
 
-    printf("Connected to server.\n");
+    address.sin_family = AF_INET;
+    address.sin_addr.s_addr = INADDR_ANY;
+    address.sin_port = htons(PORT);
 
-    // Start the continuous command session
-    send_command(sockfd);
+    // Binding the socket to the port
+    if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {
+        perror("bind failed");
+        exit(EXIT_FAILURE);
+    }
 
-    // Close the socket when done
-    close(sockfd);
+    // Start listening for incoming connections
+    if (listen(server_fd, 3) < 0) {
+        perror("listen");
+        exit(EXIT_FAILURE);
+    }
 
-    return 0;
+    while (1) {
+        printf("Waiting for connections...\n");
+
+        // Accept an incoming connection
+        if ((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t *)&addrlen)) < 0) {
+            perror("accept");
+            exit(EXIT_FAILURE);
+        }
+
+        printf("Client connected\n");
+
+        // Read the initial request
+        ssize_t bytesRead = read(new_socket, buffer, BUFFER_SIZE - 1);
+        if (bytesRead <= 0) {
+            perror("read");
+            close(new_socket);
+            continue;
+        }
+        buffer[bytesRead] = '\0'; // Null-terminate the buffer
+        printf("Received request:\n%s\n", buffer);
+
+        // Check if the request is a POST request
+        if (strncmp(buffer, "POST", 4) == 0) {
+            // Find the start of the POST data
+            char *post_data = strstr(buffer, "\r\n\r\n");
+            if (post_data) {
+                post_data += 4; // Skip the \r\n\r\n
+
+                // Extract VM name
+                char vm_name[256] = {0};
+                sscanf(post_data, "vm=%255s", vm_name);
+
+                // URL decode the VM name
+                char decoded_vm_name[256] = {0};
+                url_decode(vm_name, decoded_vm_name);
+
+                printf("VM Name: %s\n", decoded_vm_name);
+
+                // Start a persistent session with the VM
+                runSession(decoded_vm_name, new_socket);
+
+                printf("Session ended\n");
+            }
+        }
+
+        // Close the connection
+        close(new_socket);
+    }
+}
+
+void url_decode(char *src, char *dest) {
+    char *p = dest;
+    while (*src) {
+        if (*src == '%') {
+            if (src[1] && src[2]) {
+                *p++ = (char)((hex_to_int(src[1]) << 4) | hex_to_int(src[2]));
+                src += 2;
+            }
+        } else if (*src == '+') {
+            *p++ = ' ';
+        } else {
+            *p++ = *src;
+        }
+        src++;
+    }
+    *p = '\0';
+}
+
+int hex_to_int(char c) {
+    if (c >= '0' && c <= '9') {
+        return c - '0';
+    } else if (c >= 'a' && c <= 'f') {
+        return c - 'a' + 10;
+    } else if (c >= 'A' && c <= 'F') {
+        return c - 'A' + 10;
+    } else {
+        return -1;
+    }
 }
