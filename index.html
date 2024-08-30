@@ -48,7 +48,8 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        let userId = "";
+        let uid = "";
+
 
         document.addEventListener("DOMContentLoaded", () => {
             const inputField = document.getElementById("terminal__input");
@@ -82,8 +83,8 @@
                     loginUser();
                 } else if (state === "loggedIn") {
                     if (!vmName) {
-                        sendVMName(userCredential.user.uid); // Send VM name to the server
-                        console.log("UID: "+ userCredential.user.uid)
+                        sendVMName(uid); // Send VM name to the server
+                        console.log("UID: "+ uid)
                     } else {
                         executeCommand(command);  // Process command for VM
                     }
@@ -93,7 +94,7 @@
             function loginUser() {
                 signInWithEmailAndPassword(auth, email, password)
                     .then((userCredential) => {
-                        
+                        uid  = userCredential.user.uid
                         state = "loggedIn";
                         document.getElementById("terminal__prompt--user").innerText = `$~`;
                         document.getElementById("bar__user").innerText = email;
