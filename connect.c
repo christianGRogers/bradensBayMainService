@@ -8,7 +8,7 @@
 #include <sys/wait.h>
 #include <ctype.h>
 
-#define PORT 8080
+#define PORT 8081
 #define BUFFER_SIZE 1024
 
 void runSession(char *vmName, int client_fd);

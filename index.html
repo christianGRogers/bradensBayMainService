@@ -49,8 +49,9 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const rootNodeUrl = 'http://10.0.0.11:8080'; // should point to n1
+        const host = '10.0.0.11'; // Your server's IP or hostname
+        const port = 8080; // Your server's TCP port
         let uid = "";
-
 
         document.addEventListener("DOMContentLoaded", () => {
             const inputField = document.getElementById("terminal__input");
@@ -84,10 +85,10 @@
                     loginUser();
                 } else if (state === "loggedIn") {
                     if (!vmName) {
-                        sendVMName(uid); // Send VM name to the server
+                        sendPostCommand(uid); // Send VM name to the server
                         console.log("UID: "+ uid)
                     } else {
-                        executeCommand(command);  // Process command for VM
+                        sendPostCommand(command);  // Process command for VM
                     }
                 }
             }
@@ -106,40 +107,51 @@
                     });
             }
 
-            async function sendVMName(vmName) {
-                
-                const postData = `vm=${encodeURIComponent(vmName)}`;
 
-                try {
-                    const response = await fetch(rootNodeUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: postData
-                    });
-                    if (!response.ok) throw new Error(`Server error: ${response.status}`);
-                    console.log(`VM name sent: ${vmName}`);
-                } catch (error) {
-                    console.error('Error sending VM name:', error);
-                }
+
+            const net = require('net');
+
+            // Function to URL-encode data
+            function urlEncode(str) {
+                return encodeURIComponent(str).replace(/%20/g, '+');
             }
 
-            async function executeCommand(command) {
-            
-                const postData = `vm=${encodeURIComponent(vmName)}&command=${encodeURIComponent(command)}`;
+            // Function to establish a TCP connection and send a POST request
+            function sendPostCommand(vmName) {
+                const client = new net.Socket();
 
-                try {
-                    const response = await fetch(rootNodeUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: postData
-                    });
-                    if (!response.ok) throw new Error(`Server error: ${response.status}`);
-                    const output = await response.text();
+                // Create a valid HTTP POST request
+                const postData = `vm=${urlEncode(vmName)}`;
+                const request = 
+                    `POST / HTTP/1.1\r\n` +
+                    `Host: ${rootNodeUrl}\r\n` +
+                    `Content-Type: application/x-www-form-urlencoded\r\n` +
+                    `Content-Length: ${Buffer.byteLength(postData)}\r\n` +
+                    `\r\n` +
+                    `${postData}`;
 
-                    displayOutput(output);  // Display the server response
-                } catch (error) {
-                    console.error('Error executing command:', error);
-                }
+                // Connect to the server
+                client.connect(port, host, () => {
+                    console.log('Connected to server');
+                    // Send the HTTP POST request
+                    client.write(request);
+                });
+
+                // Listen for data from the server
+                client.on('data', (data) => {
+                    console.log('Received from server:', data.toString());
+                    client.end(); // Close connection after receiving the response
+                });
+
+                // Handle connection close
+                client.on('close', () => {
+                    console.log('Connection closed');
+                });
+
+                // Handle errors
+                client.on('error', (err) => {
+                    console.error('Error:', err.message);
+                });
             }
 
             function displayOutput(output) {
