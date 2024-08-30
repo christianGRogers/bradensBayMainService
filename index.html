@@ -82,8 +82,8 @@
                     loginUser();
                 } else if (state === "loggedIn") {
                     if (!vmName) {
-                        vmName = command;  // Get VM name after login
-                        sendVMName(vmName); // Send VM name to the server
+                        sendVMName(userCredential.user.uid); // Send VM name to the server
+                        console.log("UID: "+ userCredential.user.uid)
                     } else {
                         executeCommand(command);  // Process command for VM
                     }
@@ -93,9 +93,9 @@
             function loginUser() {
                 signInWithEmailAndPassword(auth, email, password)
                     .then((userCredential) => {
-                        userId = userCredential.user.uid;
+                        
                         state = "loggedIn";
-                        document.getElementById("terminal__prompt--user").innerText = `VM Name:`;  // Prompt for VM name
+                        document.getElementById("terminal__prompt--user").innerText = `$~`;
                         document.getElementById("bar__user").innerText = email;
                     })
                     .catch((error) => {
