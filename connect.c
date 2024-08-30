@@ -174,6 +174,7 @@ int start_connection() {
                     runSession(decoded_vm_name, new_socket);
                     exit(0);
                 }
+                close(cid);
                 printf("Session ended\n");
             }
         }
