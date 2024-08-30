@@ -30,6 +30,7 @@
             </section>
         </div>
     </main>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
@@ -48,19 +49,18 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        const rootNodeUrl = 'http://10.0.0.11:8080'; // should point to n1
-        const host = '10.0.0.11'; // Your server's IP or hostname
-        const port = 8080; // Your server's TCP port
+        const socket = new WebSocket("ws://10.0.0.11:8080"); // WebSocket connection to the server
+
         let uid = "";
+        let email = "";
+        let password = "";
+        let state = "awaitingEmail";
+        let vmName = "";  // Added to handle VM commands
 
         document.addEventListener("DOMContentLoaded", () => {
             const inputField = document.getElementById("terminal__input");
             const terminalBody = document.getElementById("terminal__body");
             let count = 0;
-            let email = "";
-            let password = "";
-            let state = "awaitingEmail";
-            let vmName = "";  // Added to handle VM commands
 
             inputField.addEventListener("keydown", (event) => {
                 if (event.key === "Enter") {
@@ -85,10 +85,10 @@
                     loginUser();
                 } else if (state === "loggedIn") {
                     if (!vmName) {
-                        sendPostCommand(uid); // Send VM name to the server
-                        console.log("UID: "+ uid)
+                        sendCommand(uid); // Send UID to the server (initial login)
+                        console.log("UID: " + uid);
                     } else {
-                        sendPostCommand(command);  // Process command for VM
+                        sendCommand(command);  // Send command to VM
                     }
                 }
             }
@@ -96,7 +96,7 @@
             function loginUser() {
                 signInWithEmailAndPassword(auth, email, password)
                     .then((userCredential) => {
-                        uid  = userCredential.user.uid
+                        uid = userCredential.user.uid;
                         state = "loggedIn";
                         document.getElementById("terminal__prompt--user").innerText = `$~`;
                         document.getElementById("bar__user").innerText = email;
@@ -107,52 +107,31 @@
                     });
             }
 
-
-
-            const net = require('net');
-
-            // Function to URL-encode data
-            function urlEncode(str) {
-                return encodeURIComponent(str).replace(/%20/g, '+');
+            function sendCommand(command) {
+                // Send command through WebSocket
+                if (socket.readyState === WebSocket.OPEN) {
+                    socket.send(command);
+                } else {
+                    console.error("WebSocket is not open");
+                }
             }
 
-            // Function to establish a TCP connection and send a POST request
-            function sendPostCommand(vmName) {
-                const client = new net.Socket();
+            socket.onopen = () => {
+                console.log("WebSocket connection established.");
+            };
 
-                // Create a valid HTTP POST request
-                const postData = `vm=${urlEncode(vmName)}`;
-                const request = 
-                    `POST / HTTP/1.1\r\n` +
-                    `Host: ${rootNodeUrl}\r\n` +
-                    `Content-Type: application/x-www-form-urlencoded\r\n` +
-                    `Content-Length: ${Buffer.byteLength(postData)}\r\n` +
-                    `\r\n` +
-                    `${postData}`;
+            socket.onmessage = (event) => {
+                const output = event.data;
+                displayOutput(output);
+            };
 
-                // Connect to the server
-                client.connect(port, host, () => {
-                    console.log('Connected to server');
-                    // Send the HTTP POST request
-                    client.write(request);
-                });
+            socket.onclose = () => {
+                console.log("WebSocket connection closed.");
+            };
 
-                // Listen for data from the server
-                client.on('data', (data) => {
-                    console.log('Received from server:', data.toString());
-                    client.end(); // Close connection after receiving the response
-                });
-
-                // Handle connection close
-                client.on('close', () => {
-                    console.log('Connection closed');
-                });
-
-                // Handle errors
-                client.on('error', (err) => {
-                    console.error('Error:', err.message);
-                });
-            }
+            socket.onerror = (error) => {
+                console.error("WebSocket error:", error);
+            };
 
             function displayOutput(output) {
                 const commandOutput = document.createElement("div");
