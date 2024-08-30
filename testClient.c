@@ -37,10 +37,10 @@ int main() {
     }
 
     // Send the VM name as part of the initial POST request
-    char *vm_name = "UKfKH115mGVUPD6vDvILbqUVdet1";
-    // printf("Enter the VM name: ");
-    // fgets(vm_name, sizeof(vm_name), stdin);
-    // vm_name[strcspn(vm_name, "\n")] = 0; // Remove the newline character
+    char *vm_name;
+    printf("Enter the VM name: ");
+    fgets(vm_name, sizeof(vm_name), stdin);
+    vm_name[strcspn(vm_name, "\n")] = 0; // Remove the newline character
 
     // Format and send the POST request to send the VM name to the server
     char post_request[BUFFER_SIZE];

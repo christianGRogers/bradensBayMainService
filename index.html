@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="icon" type="image/png" href="https://img.icons8.com/ios-filled/50/b.png">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Ubuntu Terminal</title>
+    <title>VM Command Terminal</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="style.css"/>
 </head>
@@ -30,83 +29,52 @@
             </section>
         </div>
     </main>
+
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
-
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyDmdf8NhoFAzXKGuBWYq5XoDrM5eNClgOg",
-            authDomain: "bradensbay-1720893101514.firebaseapp.com",
-            projectId: "bradensbay-1720893101514",
-            storageBucket: "bradensbay-1720893101514.appspot.com",
-            messagingSenderId: "280971564912",
-            appId: "1:280971564912:web:989fff5191d0512c1b21b5",
-            measurementId: "G-DNJS8CVKWD"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        let userId = "";
-
         document.addEventListener("DOMContentLoaded", () => {
             const inputField = document.getElementById("terminal__input");
             const terminalBody = document.getElementById("terminal__body");
-            let count = 0;
-            let email = "";
-            let password = "";
-            let state = "awaitingEmail";
 
-            processCommand("c");
+            let vmName = "";
 
             inputField.addEventListener("keydown", (event) => {
                 if (event.key === "Enter") {
-                    count++;
                     const command = inputField.value.trim();
-                    processCommand(command);
-                    inputField.value = "";
-                    if (count >= 15) {
-                        processCommand("clear");
-                        count = 0;
+                    if (vmName === "") {
+                        // First input is the VM name
+                        vmName = command;
+                        sendVMName(vmName);
+                    } else {
+                        // Subsequent inputs are commands
+                        if (command.toLowerCase() === "exit") {
+                            displayOutput("Exiting...");
+                            return;
+                        }
+                        sendCommand(vmName, command);
                     }
+                    inputField.value = "";
                 }
             });
 
-            function processCommand(command) {
-                if (state === "awaitingEmail" && command !== "c") {
-                    email = command;
-                    state = "awaitingPassword";
-                    document.getElementById("terminal__prompt--user").innerText = "password:";
-                    return;
-                }
-                if (state === "awaitingPassword" && command !== "c") {
-                    password = command;
-                    loginUser();
-                    return;
-                }
-                if (state === "loggedIn" || command === "c") {
-                    executeCommand(command);
-                }
-            }
+            async function sendVMName(vmName) {
+                const url = 'http://localhost:8080';  // Replace with your server's address
+                const postData = `vm=${encodeURIComponent(vmName)}`;
 
-            function loginUser() {
-                signInWithEmailAndPassword(auth, email, password)
-                    .then((userCredential) => {
-                        userId = userCredential.user.uid;
-                        console.log("User" + userId);
-                        state = "loggedIn";
-                        document.getElementById("terminal__prompt--user").innerText = email;
-                        document.getElementById("bar__user").innerText = email;
-                    })
-                    .catch((error) => {
-                        location.reload();
-                        console.error("Login failed:", error.message);
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: postData
                     });
+                    if (!response.ok) throw new Error(`Server error: ${response.status}`);
+                    displayOutput(`VM name sent: ${vmName}`);
+                } catch (error) {
+                    displayOutput(`Error sending VM name: ${error.message}`);
+                }
             }
 
             async function sendCommand(vmName, command) {
-                const url = 'http://10.0.0.67:8080'; 
+                const url = 'http://localhost:8080';  // Replace with your server's address
                 const postData = `vm=${encodeURIComponent(vmName)}&command=${encodeURIComponent(command)}`;
 
                 try {
@@ -116,43 +84,17 @@
                         body: postData
                     });
                     if (!response.ok) throw new Error(`Server error: ${response.status}`);
-                    return await response.text();
+                    const output = await response.text();
+                    displayOutput(`VM output:\n${output}`);
                 } catch (error) {
-                    console.error('Error:', error);
-                    return null;
+                    displayOutput(`Error sending command: ${error.message}`);
                 }
             }
 
-            async function executeCommand(command) {
-                let output = "";
-                switch (command) {
-                    case "c":
-                        output = `
-                            <img src='logo.png' alt='logo' width='428' height='100'><br><br>
-                            ////////////////////////////////////////////////////////<br>
-                            <a href='https://fobabs.medium.com/how-i-built-a-typical-ubuntu-terminal-using-html-css-a43e98df13be'>Frontend ref</a><br> 
-                            MIT License<br> 
-                            Copyright (c) 2024 Christian Rogers<br>
-                            <a href='./signUP.html'>make an account</a><br><br>`;
-                        break;
-                    case "clear":
-                        terminalBody.innerHTML = `
-                            <div id="terminal__prompt">
-                                <span id="terminal__prompt--user">${userId ? email : ""}</span>
-                                <span id="terminal__prompt--location">~</span>
-                                <span id="terminal__prompt--bling">$</span>
-                                <input type="text" id="terminal__input" autofocus>
-                            </div>`;
-                        document.getElementById("terminal__input").focus();
-                        break;
-                    default:
-                        output = await sendCommand(userId, command);
-                        break;
-                }
-
+            function displayOutput(message) {
                 const commandOutput = document.createElement("div");
                 commandOutput.classList.add("terminal__output");
-                commandOutput.innerHTML = `<span>${output}</span>`;
+                commandOutput.innerHTML = `<span>${message}</span>`;
                 terminalBody.insertBefore(commandOutput, document.getElementById("terminal__prompt"));
             }
         });
