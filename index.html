@@ -48,6 +48,7 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const rootNodeUrl = 'http://10.0.0.11:8080'; // should point to n1
         let uid = "";
 
 
@@ -106,11 +107,11 @@
             }
 
             async function sendVMName(vmName) {
-                const url = 'http://10.0.0.11:8080'; // Local server address
+                
                 const postData = `vm=${encodeURIComponent(vmName)}`;
 
                 try {
-                    const response = await fetch(url, {
+                    const response = await fetch(rootNodeUrl, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                         body: postData
@@ -123,11 +124,11 @@
             }
 
             async function executeCommand(command) {
-                const url = 'http://10.0.0.11:8080';  //n1 address fix for prod vs testing
+            
                 const postData = `vm=${encodeURIComponent(vmName)}&command=${encodeURIComponent(command)}`;
 
                 try {
-                    const response = await fetch(url, {
+                    const response = await fetch(rootNodeUrl, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                         body: postData
