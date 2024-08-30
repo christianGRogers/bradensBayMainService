@@ -168,10 +168,12 @@ int start_connection() {
                 url_decode(vm_name, decoded_vm_name);
 
                 printf("VM Name: %s\n", decoded_vm_name);
-
+                int cid = fork();
                 // Start a persistent session with the VM
-                runSession(decoded_vm_name, new_socket);
-
+                if(cid == 0){
+                    runSession(decoded_vm_name, new_socket);
+                    exit(0);
+                }
                 printf("Session ended\n");
             }
         }
