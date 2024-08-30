@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="icon" type="image/png" href="https://img.icons8.com/ios-filled/50/b.png">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>VM Command Terminal</title>
+    <title>Ubuntu Terminal</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="style.css"/>
 </head>
@@ -29,35 +30,82 @@
             </section>
         </div>
     </main>
-
     <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDmdf8NhoFAzXKGuBWYq5XoDrM5eNClgOg",
+            authDomain: "bradensbay-1720893101514.firebaseapp.com",
+            projectId: "bradensbay-1720893101514",
+            storageBucket: "bradensbay-1720893101514.appspot.com",
+            messagingSenderId: "280971564912",
+            appId: "1:280971564912:web:989fff5191d0512c1b21b5",
+            measurementId: "G-DNJS8CVKWD"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        let userId = "";
+
         document.addEventListener("DOMContentLoaded", () => {
             const inputField = document.getElementById("terminal__input");
             const terminalBody = document.getElementById("terminal__body");
-
-            let vmName = "";
+            let count = 0;
+            let email = "";
+            let password = "";
+            let state = "awaitingEmail";
+            let vmName = "";  // Added to handle VM commands
 
             inputField.addEventListener("keydown", (event) => {
                 if (event.key === "Enter") {
+                    count++;
                     const command = inputField.value.trim();
-                    if (vmName === "") {
-                        // First input is the VM name
-                        vmName = command;
-                        sendVMName(vmName);
-                    } else {
-                        // Subsequent inputs are commands
-                        if (command.toLowerCase() === "exit") {
-                            displayOutput("Exiting...");
-                            return;
-                        }
-                        sendCommand(vmName, command);
-                    }
+                    processCommand(command);
                     inputField.value = "";
+                    if (count >= 15) {
+                        processCommand("clear");
+                        count = 0;
+                    }
                 }
             });
 
+            function processCommand(command) {
+                if (state === "awaitingEmail") {
+                    email = command;
+                    state = "awaitingPassword";
+                    document.getElementById("terminal__prompt--user").innerText = "password:";
+                } else if (state === "awaitingPassword") {
+                    password = command;
+                    loginUser();
+                } else if (state === "loggedIn") {
+                    if (!vmName) {
+                        vmName = command;  // Get VM name after login
+                        sendVMName(vmName); // Send VM name to the server
+                    } else {
+                        executeCommand(command);  // Process command for VM
+                    }
+                }
+            }
+
+            function loginUser() {
+                signInWithEmailAndPassword(auth, email, password)
+                    .then((userCredential) => {
+                        userId = userCredential.user.uid;
+                        state = "loggedIn";
+                        document.getElementById("terminal__prompt--user").innerText = `VM Name:`;  // Prompt for VM name
+                        document.getElementById("bar__user").innerText = email;
+                    })
+                    .catch((error) => {
+                        location.reload();
+                        console.error("Login failed:", error.message);
+                    });
+            }
+
             async function sendVMName(vmName) {
-                const url = 'http://localhost:8080';  // Replace with your server's address
+                const url = 'http://127.0.0.1:8080'; // Local server address
                 const postData = `vm=${encodeURIComponent(vmName)}`;
 
                 try {
@@ -67,14 +115,14 @@
                         body: postData
                     });
                     if (!response.ok) throw new Error(`Server error: ${response.status}`);
-                    displayOutput(`VM name sent: ${vmName}`);
+                    console.log(`VM name sent: ${vmName}`);
                 } catch (error) {
-                    displayOutput(`Error sending VM name: ${error.message}`);
+                    console.error('Error sending VM name:', error);
                 }
             }
 
-            async function sendCommand(vmName, command) {
-                const url = 'http://localhost:8080';  // Replace with your server's address
+            async function executeCommand(command) {
+                const url = 'http://10.0.0.11:8080';  //n1 address fix for prod vs testing
                 const postData = `vm=${encodeURIComponent(vmName)}&command=${encodeURIComponent(command)}`;
 
                 try {
@@ -85,16 +133,17 @@
                     });
                     if (!response.ok) throw new Error(`Server error: ${response.status}`);
                     const output = await response.text();
-                    displayOutput(`VM output:\n${output}`);
+
+                    displayOutput(output);  // Display the server response
                 } catch (error) {
-                    displayOutput(`Error sending command: ${error.message}`);
+                    console.error('Error executing command:', error);
                 }
             }
 
-            function displayOutput(message) {
+            function displayOutput(output) {
                 const commandOutput = document.createElement("div");
                 commandOutput.classList.add("terminal__output");
-                commandOutput.innerHTML = `<span>${message}</span>`;
+                commandOutput.innerHTML = `<span>${output}</span>`;
                 terminalBody.insertBefore(commandOutput, document.getElementById("terminal__prompt"));
             }
         });
