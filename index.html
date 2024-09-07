@@ -22,10 +22,10 @@
             <!-- Terminal Body -->
             <section id="terminal__body">
                 <div id="terminal__prompt">
-                    <div style="margin-bottom: 10px;">
+                    <div>
                         <img src="logo.png" alt="logo" style="width:200px;height:50px;">
                     </div>
-                    <div style="margin-bottom: 10px;">
+                    <div>
                         <a href="/bradensBayMainService/signUP.html">Make an account</a>
                     </div>
                     <span id="terminal__prompt--user">username:</span>
@@ -58,7 +58,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         //const WebSocket = require('ws');
-        //const socket = new WebSocket("ws://10.0.0.11:8080"); // WebSocket connection to the server
+        const socket = new WebSocket("ws://10.0.0.11:8080"); // WebSocket connection to the server
         ///ugheufuefgu
         let uid = "";
         let email = "";

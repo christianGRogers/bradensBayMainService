@@ -170,3 +170,12 @@ button:hover {
 #terminal__input:focus {
   outline: none;
 }
+
+#terminal__prompt img {
+  margin-bottom: 20px;
+}
+
+#terminal__prompt a {
+  display: block;
+  margin-bottom: 20px;
+}
