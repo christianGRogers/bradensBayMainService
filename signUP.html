@@ -12,7 +12,7 @@
         <input type="password" id="password" placeholder="Password" required>
         <button type="submit">Sign Up</button>
     </form>
-    <div id="recaptcha-container"></div>
+    <div id="recaptcha-container"></div>  
     <form id="verify-code-form" style="display: none;">
         <input type="text" id="verification-code" placeholder="Verification Code" required>
         <button type="submit">Verify Code</button>
@@ -51,16 +51,17 @@
                 // Send verification email
                 await sendEmailVerification(user);
                 console.log("Verification email sent.");
+                alert("An email has been sent to your inbox confirm to sign in ");
+                window.location.replace('https://bradensbay.com/bradensBayMainService/');
+                // window.recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {}, auth);
+                // window.recaptchaVerifier.render();
 
-                window.recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {}, auth);
-                window.recaptchaVerifier.render();
+                // // Here we should add phone number input and handle 2FA with phone number
+                // // For simplicity, let's assume we have a phone number
+                // const phoneNumber = "+1234567890"; // Replace with actual phone number input
+                // const appVerifier = window.recaptchaVerifier;
 
-                // Here we should add phone number input and handle 2FA with phone number
-                // For simplicity, let's assume we have a phone number
-                const phoneNumber = "+1234567890"; // Replace with actual phone number input
-                const appVerifier = window.recaptchaVerifier;
-
-                const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
+                // const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
                 window.confirmationResult = confirmationResult;
                 document.getElementById('verify-code-form').style.display = 'block';
             } catch (error) {
