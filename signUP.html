@@ -52,7 +52,7 @@
                 await sendEmailVerification(user);
                 console.log("Verification email sent.");
                 alert("An email has been sent to your inbox confirm to sign in ");
-                window.location.replace('https://bradensbay.com/bradensBayMainService/');
+                window.location.replace('/bradensBayMainService/');
                 // window.recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {}, auth);
                 // window.recaptchaVerifier.render();
 
@@ -66,6 +66,8 @@
                 document.getElementById('verify-code-form').style.display = 'block';
             } catch (error) {
                 console.error(error.message);
+                alert("There already exists an account with this email.");
+                window.location.replace('/bradensBayMainService/signUP.html');
             }
         });
 
