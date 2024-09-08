@@ -65,9 +65,20 @@
             const inputField = document.getElementById("terminal__input");
             const terminalBody = document.getElementById("terminal__body");
             let count = 0;
-            ///
-            terminalBody.insertBefore("<img src='logo.png' alt='logo' style='width:200px;height:50px;'><br><a href='/bradensBayMainService/signUP.html'>Make an account</a><br>", document.getElementById("terminal__prompt--user"));
-            //
+            let promptUser = document.getElementById("terminal__prompt--user");
+
+            let container = document.createElement('div');
+
+            // Add the logo and sign-up link as HTML inside the container
+            container.innerHTML = `
+            <img src='logo.png' alt='logo' style='width:200px;height:50px;'>
+            <br>
+            <a href='/bradensBayMainService/signUP.html'>Make an account</a>
+            <br>
+            `;
+
+            // Insert the container before the prompt user
+            terminalBody.insertBefore(container, promptUser);
             inputField.addEventListener("keydown", (event) => {
                 if (event.key === "Enter") {
                     count++;
