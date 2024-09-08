@@ -22,6 +22,10 @@
             <!-- Terminal Body -->
             <section id="terminal__body">
                 <div id="terminal__prompt">
+                    <div id ="logosignup">            <img src='logo.png' alt='logo' style='width:200px;height:50px;'>
+                        <br>
+                        <a href='/bradensBayMainService/signUP.html'>Make an account</a>
+                        <br></div>
                     <span id="terminal__prompt--user">username:</span>
                     <span id="terminal__prompt--location">~</span>
                     <span id="terminal__prompt--bling">$</span>
@@ -65,20 +69,7 @@
             const inputField = document.getElementById("terminal__input");
             const terminalBody = document.getElementById("terminal__body");
             let count = 0;
-            let promptUser = document.getElementById("terminal__prompt--user");
 
-            let container = document.createElement('div');
-
-            // Add the logo and sign-up link as HTML inside the container
-            container.innerHTML = `
-            <img src='logo.png' alt='logo' style='width:200px;height:50px;'>
-            <br>
-            <a href='/bradensBayMainService/signUP.html'>Make an account</a>
-            <br>
-            `;
-
-            // Insert the container before the prompt user
-            terminalBody.insertBefore(container, promptUser);
             inputField.addEventListener("keydown", (event) => {
                 if (event.key === "Enter") {
                     count++;
