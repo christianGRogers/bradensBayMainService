@@ -14,7 +14,7 @@ CLIENT_SRC = testClient.c
 SOCK_SERVER_SRC = SockServer.c
 
 # Build all
-all: $(SERVER_EXEC) $(CLIENT_EXEC)
+all: $(SERVER_EXEC) $(CLIENT_EXEC) $(SOCK_SERVER_EXEC)
 
 # Build the server
 $(SERVER_EXEC): $(SERVER_SRC)
