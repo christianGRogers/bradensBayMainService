@@ -22,14 +22,6 @@
             <!-- Terminal Body -->
             <section id="terminal__body">
                 <div id="terminal__prompt">
-                    <!-- Logo on one line -->
-                    <div style="text-align:center; margin-bottom: 10px;">
-                        <img src="logo.png" alt="logo" style="width:200px;height:50px;">
-                    </div>
-                    <!-- Sign-up link on a separate line -->
-                    <div style="text-align:center; margin-bottom: 20px;">
-                        <a href="/bradensBayMainService/signUP.html">Make an account</a>
-                    </div>
                     <span id="terminal__prompt--user">username:</span>
                     <span id="terminal__prompt--location">~</span>
                     <span id="terminal__prompt--bling">$</span>
@@ -42,6 +34,10 @@
     </main>
 
     <script type="module">
+
+        ///
+        terminalBody.insertBefore("<img src='logo.png' alt='logo' style='width:200px;height:50px;'><br><a href='/bradensBayMainService/signUP.html'>Make an account</a><br>", document.getElementById("terminal__prompt--user"));
+        ///
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
 
