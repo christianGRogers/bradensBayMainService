@@ -58,7 +58,7 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        const WebSocket = require('ws');
+        //const WebSocket = require('ws');
         const socket = new WebSocket("ws://localhost:8080"); // WebSocket connection to the server
         
         let uid = "";
