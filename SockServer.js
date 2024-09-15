@@ -27,11 +27,14 @@ try {
     tcpsock.on('end', () => {
       console.log('Disconnected from server');
     });
-    
+    tcpsock.on('error', () => {
+      console.error('Failed to connect to tcp server:', error.message);
+    });
     websock.on('message', function incoming(message) {
       console.log('received: %s', message);
       tcpsock.write(message);
     });
+
     websock.on('close', () => {
       console.log('Client disconnected.');
     });
