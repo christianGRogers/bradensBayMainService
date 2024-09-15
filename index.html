@@ -107,6 +107,7 @@
                 signInWithEmailAndPassword(auth, email, password)
                     .then((userCredential) => {
                         uid = userCredential.user.uid;
+                        console.log("uid: ", uid);
                         state = "loggedIn";
                         document.getElementById("terminal__prompt--user").innerText = `$~`;
                         document.getElementById("bar__user").innerText = email;
