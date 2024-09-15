@@ -16,7 +16,7 @@ try {
   websock.on('connection', function connection(ws) {
     console.log('New client connected.');
     console.log('open a new tcp connection to n1');
-    const tcpsock = net.createConnection({ port: 8081 }, () => {
+    const tcpsock = net.createConnection({ port: 8081, host: '10.0.0.11' }, () => {
       console.log('Connected to server');
     });
     tcpsock.on('data', (data) => {
