@@ -5,7 +5,7 @@ const axios = require('axios'); // Using axios for simplicity
 
 try {
 
-  var VMnameRec = false;
+  
   const websock = new WebSocket.Server({ port: 8080 });
   websock.on('error', (error) => {
     console.error('WebSocket server failed to start:', error.message);
@@ -24,6 +24,7 @@ try {
   });
  
   websock.on('connection', async function connection(ws) {
+    var VMnameRec = false;
     websock.on('message', function incoming(message) {
       console.log('Received from WebSocket client: %s', message);
       if(VMnameRec){
@@ -35,7 +36,7 @@ try {
         };
         const response = axios.post('http://10.0.0.11:8081', postData); 
         console.log('POST request successful. Response:', response.data);
-        
+        VMnameRec = true;
       }
     });
     try {
