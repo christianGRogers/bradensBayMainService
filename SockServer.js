@@ -27,7 +27,7 @@ try {
     tcpsock.on('end', () => {
       console.log('Disconnected from server');
     });
-    tcpsock.on('error', () => {
+    tcpsock.on('error', (error) => {
       console.error('Failed to connect to tcp server:', error.message);
     });
     websock.on('message', function incoming(message) {
