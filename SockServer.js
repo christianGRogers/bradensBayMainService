@@ -8,7 +8,6 @@ try {
   const websock = new WebSocket.Server({ port: 8080 });
   websock.on('error', (error) => {
     console.error('WebSocket server failed to start:', error.message);
-    process.exit(1); 
   });
 
   websock.on('listening', () => {
@@ -44,5 +43,5 @@ try {
 
 } catch (error) {
   console.error('Failed to start the WebSocket server:', error.message);
-  process.exit(1); 
+  
 }
