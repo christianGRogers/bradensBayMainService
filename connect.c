@@ -134,7 +134,7 @@ int start_connection() {
     while (1) {
         printf("Waiting for connections...\n");
 
-        // Accept an incoming connection
+        
         if ((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t *)&addrlen)) < 0) {
             perror("accept");
             exit(EXIT_FAILURE);
