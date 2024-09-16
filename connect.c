@@ -119,13 +119,13 @@ int start_connection() {
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(PORT);
 
-    // Binding the socket to the port
+
     if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {
         perror("bind failed");
         exit(EXIT_FAILURE);
     }
 
-    // Start listening for incoming connections
+
     if (listen(server_fd, 3) < 0) {
         perror("listen");
         exit(EXIT_FAILURE);
@@ -151,33 +151,16 @@ int start_connection() {
         }
         buffer[bytesRead] = '\0'; // Null-terminate the buffer
         printf("Received request:\n%s\n", buffer);
-
-        // Check if the request is a POST request
-        if (strncmp(buffer, "POST", 4) == 0) {
-            // Find the start of the POST data
-            char *post_data = strstr(buffer, "\r\n\r\n");
-            if (post_data) {
-                post_data += 4; // Skip the \r\n\r\n
-
-                // Extract VM name
-                char vm_name[256] = {0};
-                sscanf(post_data, "vm=%255s", vm_name);
-
-                // URL decode the VM name
-                char decoded_vm_name[256] = {0};
-                url_decode(vm_name, decoded_vm_name);
-
-                printf("VM Name: %s\n", decoded_vm_name);
-                int cid = fork();
-                // Start a persistent session with the VM
-                if(cid == 0){
-                    runSession(decoded_vm_name, new_socket);
-                    exit(0);
-                }
-                close(cid);
-                printf("Session ended\n");
-            }
+        
+        //  assume that the inital req is the vm name(uid)
+        int cid = fork();
+        // Start a persistent session with the VM
+        if(cid == 0){
+            runSession(buffer, new_socket);
+            exit(0);
         }
+        close(cid);
+        printf("Session ended\n");
 
         // Close the connection
         close(new_socket);
