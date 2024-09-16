@@ -64,7 +64,7 @@ void runSession(char *vmName, int client_fd) {
 
             // Receive command from client
             bytesRead = read(client_fd, buffer, BUFFER_SIZE - 1);
-            if (bytesRead <= 0) {
+            if (bytesRead < 0) {
                 printf("Client disconnected\n");
                 break; // Exit the loop if client disconnects
             }
