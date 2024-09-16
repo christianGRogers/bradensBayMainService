@@ -106,7 +106,7 @@
                         state = "loggedIn";
                         sendCommand(uid);
                         document.getElementById("terminal__prompt--user").innerText = `$~`;
-                        document.getElementById("bar__user").innerText = email;
+                        document.getElementById("terminal__prompt--bling").innerText = email;
                     })
                     .catch((error) => {
                         location.reload();
