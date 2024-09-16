@@ -148,7 +148,7 @@
             function displayOutput(output) {
                 const commandOutput = document.createElement("div");
                 commandOutput.classList.add("terminal__output");
-                commandOutput.innerHTML = `<span>${output.text()}</span>`;
+                commandOutput.innerHTML = `<span>${output}</span>`;
                 terminalBody.insertBefore(commandOutput, document.getElementById("terminal__prompt"));
             }
         });
