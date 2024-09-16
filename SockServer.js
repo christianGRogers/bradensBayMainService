@@ -1,4 +1,4 @@
-const WebSocket = require('ws');
+const WebSocket = require('wss');
 const net = require('net');
 
 try {
