@@ -38,7 +38,7 @@ try {
     // Forward data from the TCP server back to the WebSocket client
     tcpsock.on('data', (data) => {
       console.log('Data from TCP server: ' + data.toString());
-      ws.send(data); // Send TCP server data back to WebSocket client
+      ws.send(data.toString()); // Send TCP server data back to WebSocket client
     });
 
     // Handle WebSocket client disconnection
