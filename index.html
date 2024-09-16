@@ -105,8 +105,9 @@
                         console.log("uid: ", uid);
                         state = "loggedIn";
                         sendCommand(uid);
-                        document.getElementById("terminal__prompt--user").innerText = `$~`;
-                        document.getElementById("terminal__prompt--bling").innerText = email;
+                        document.getElementById("terminal__prompt--location").innerText = `$~`;
+                        document.getElementById("terminal__prompt--bling").innerText = `$~`;
+                        document.getElementById("terminal__prompt--user").innerText = email;
                     })
                     .catch((error) => {
                         location.reload();
