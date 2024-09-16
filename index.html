@@ -129,12 +129,20 @@
             };
 
 
-            socket.onmessage = async (event) => {
-                const output = await event.data;
-                console.log(output);
-                displayOutput(output);
+            socket.onmessage = (event) => {
+                // Check if the received data is a Blob
+                if (event.data instanceof Blob) {
+                    const reader = new FileReader();
+                    reader.onload = function() {
+                        const textData = reader.result; // This will be the text content of the blob
+                        displayOutput(textData);
+                    };
+                    reader.readAsText(event.data);  // Read the Blob as text
+                } else {
+                    // If it's not a Blob, handle it as usual
+                    displayOutput(event.data);
+                }
             };
-
             socket.onclose = () => {
                 console.log("WebSocket connection closed.");
             };
