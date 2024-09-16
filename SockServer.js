@@ -1,6 +1,5 @@
 const WebSocket = require('ws');
 const net = require('net');
-const axios = require('axios'); // Using axios for simplicity
 
 try {
   const websock = new WebSocket.Server({ port: 8080 });
@@ -14,12 +13,35 @@ try {
   });
 
   // Handle WebSocket client connections
-  websock.on('connection', async function connection(ws) {
+  websock.on('connection', function connection(ws) {
     console.log('New WebSocket client connected.');
 
-    let tcpsock = null;
-    let VMnameRec = false; // To track if the VM name has been received
+    // Create a TCP connection for each WebSocket client
+    const tcpsock = net.createConnection({ port: 8081, host: '10.0.0.11' }, () => {
+      console.log('Connected to TCP server');
+    });
 
+    // When the WebSocket client sends a message, forward it to the TCP server
+    ws.on('message', function incoming(message) {
+      console.log('Received from WebSocket client: %s', message);
+
+      if (tcpsock) {
+        // Send WebSocket message to the TCP server
+        tcpsock.write(message, (err) => {
+          if (err) {
+            console.error('Error writing to TCP server:', err.message);
+          }
+        });
+      }
+    });
+
+    // Forward data from the TCP server back to the WebSocket client
+    tcpsock.on('data', (data) => {
+      console.log('Data from TCP server: ' + data.toString());
+      ws.send(data); // Send TCP server data back to WebSocket client
+    });
+
+    // Handle WebSocket client disconnection
     ws.on('close', () => {
       console.log('WebSocket client disconnected.');
       if (tcpsock) {
@@ -27,59 +49,23 @@ try {
       }
     });
 
+    // Handle WebSocket client error
     ws.on('error', (error) => {
       console.error('WebSocket client error:', error.message);
       if (tcpsock) {
-        tcpsock.end(); // Close TCP connection on error
+        tcpsock.end(); // Close TCP connection on WebSocket error
       }
     });
 
-    ws.on('message', async function incoming(message) {
-      console.log('Received from WebSocket client: %s', message);
+    // Handle TCP connection errors
+    tcpsock.on('error', (error) => {
+      console.error('Failed to connect to TCP server:', error.message);
+      ws.send('Error: Failed to connect to TCP server.');
+    });
 
-      if (VMnameRec) {
-        // Forward message to the TCP server once VM name is received
-        if (tcpsock) {
-          tcpsock.write(message); // Send WebSocket message to TCP server
-        } else {
-          console.error('No TCP connection established.');
-        }
-      } else {
-        // If the VM name is not yet received, treat the message as VM name
-        console.log('Sending POST request with VM name...');
-        const postData = {
-          vm: message
-        };
-
-        try {
-          const response = await axios.post('http://10.0.0.11:8081', postData); 
-          console.log('POST request successful. Response:', response.data);
-          VMnameRec = true;
-
-          // Now open a new TCP connection
-          console.log('Opening a new TCP connection to n1...');
-          tcpsock = net.createConnection({ port: 8081, host: '10.0.0.11' }, () => {
-            console.log('Connected to TCP server');
-          });
-
-          tcpsock.on('data', (data) => {
-            console.log('Data from TCP server: ' + data.toString());
-            ws.send(data); // Send TCP server data back to WebSocket client
-          });
-
-          tcpsock.on('end', () => {
-            console.log('Disconnected from TCP server');
-          });
-
-          tcpsock.on('error', (error) => {
-            console.error('Failed to connect to TCP server:', error.message);
-            ws.send('Error: Failed to connect to TCP server.');
-          });
-        } catch (postError) {
-          console.error('POST request failed:', postError.message);
-          ws.send('Error: Failed to send POST request.');
-        }
-      }
+    // Handle TCP server disconnection
+    tcpsock.on('end', () => {
+      console.log('Disconnected from TCP server');
     });
   });
 
