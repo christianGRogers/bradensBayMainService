@@ -128,14 +128,10 @@
                 console.log("WebSocket connection established.");
             };
 
-            async function awaitPromis(promis) {
-                return await promis
-            }
 
-            socket.onmessage = (event) => {
-                var output = event.data;
+            socket.onmessage = async (event) => {
+                const output = await event.data;
                 console.log(output);
-                output = awaitPromis(output);
                 displayOutput(output);
             };
 
