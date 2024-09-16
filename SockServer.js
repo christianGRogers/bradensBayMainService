@@ -2,6 +2,7 @@ const WebSocket = require('ws');
 const net = require('net');
 const http = require('http');
 const axios = require('axios'); // Using axios for simplicity
+var VMnameRec = false;
 
 try {
 
@@ -38,7 +39,6 @@ try {
     }
   });
   websock.on('connection', async function connection(ws) {
-    var VMnameRec = false;
     // try {
 
     //     console.log('Opening a new TCP connection to n1...');
