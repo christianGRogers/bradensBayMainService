@@ -127,8 +127,13 @@
                 console.log("WebSocket connection established.");
             };
 
+            async function awaitPromis(promis) {
+                return await promis
+            }
+
             socket.onmessage = (event) => {
                 const output = event.data;
+                output = awaitPromis(output);
                 displayOutput(output);
             };
 
