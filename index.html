@@ -134,7 +134,7 @@
             };
 
             socket.onmessage = (event) => {
-                const output = event.data;
+                const output = event.data.text();
                 displayOutput(output);
             };
 
