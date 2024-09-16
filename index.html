@@ -65,7 +65,7 @@
         let email = "";
         let password = "";
         let state = "awaitingEmail";
-        let vmName = "";  // Added to handle VM commands
+        let vmName = false;  // Added to handle VM commands
 
         document.addEventListener("DOMContentLoaded", () => {
             const inputField = document.getElementById("terminal__input");
@@ -97,6 +97,7 @@
                     if (!vmName) {
                         sendCommand(uid); // Send UID to the server (initial login)
                         console.log("UID: " + uid);
+                        vmName = true;
                     } else {
                         sendCommand(command);  // Send command to VM
                     }

@@ -30,6 +30,7 @@ try {
       tcpsock.write(message);
     }
     else{
+      console.log("sending POST req");
       const postData = {
         vm: message
       };
