@@ -94,13 +94,7 @@
                     password = command;
                     loginUser();
                 } else if (state === "loggedIn") {
-                    if (!vmName) {
-                        sendCommand(uid); // Send UID to the server (initial login)
-                        console.log("UID: " + uid);
-                        vmName = true;
-                    } else {
-                        sendCommand(command);  // Send command to VM
-                    }
+                    sendCommand(command);  // Send command to VM
                 }
             }
 
@@ -109,8 +103,8 @@
                     .then((userCredential) => {
                         uid = userCredential.user.uid;
                         console.log("uid: ", uid);
-                        sendCommand(uid);
                         state = "loggedIn";
+                        sendCommand(uid);
                         document.getElementById("terminal__prompt--user").innerText = `$~`;
                         document.getElementById("bar__user").innerText = email;
                     })
