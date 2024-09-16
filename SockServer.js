@@ -16,15 +16,15 @@ try {
     console.log('WebSocket server is running on port 8080.');
   });
         
-  websock.on('close', () => {
+  ws.on('close', () => {
     console.log('WebSocket client disconnected.');
   });
 
-  websock.on('error', (error) => {
+  ws.on('error', (error) => {
     console.error('WebSocket client error:', error.message);
   });
   
-  websock.on('message', function incoming(message) {
+  ws.on('message', function incoming(message) {
     console.log('Received from WebSocket client: %s', message);
     if(VMnameRec){
       tcpsock.write(message);
@@ -40,6 +40,7 @@ try {
     }
   });
   websock.on('connection', async function connection(ws) {
+    console.log("new client");
     // try {
 
     //     console.log('Opening a new TCP connection to n1...');
