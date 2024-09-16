@@ -21,7 +21,7 @@ try {
       console.log('Connected to TCP server');
     });
 
-    // When the WebSocket client sends a message, forward it to the TCP server
+    
     ws.on('message', function incoming(message) {
       console.log('Received from WebSocket client: %s', message);
 

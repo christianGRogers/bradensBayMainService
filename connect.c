@@ -159,11 +159,10 @@ int start_connection() {
             runSession(buffer, new_socket);
             exit(0);
         }
-        close(cid);
+        if (cid > 0) {
+            close(new_socket);  // Close the socket in the parent process after forking
+        }
         printf("Session ended\n");
-
-        // Close the connection
-        close(new_socket);
     }
 }
 
