@@ -22,11 +22,11 @@ try {
     ws.on('close', () => {
       console.log('WebSocket client disconnected.');
     });
-  
+
     ws.on('error', (error) => {
       console.error('WebSocket client error:', error.message);
     });
-    
+  
     ws.on('message', function incoming(message) {
       console.log('Received from WebSocket client: %s', message);
       if(VMnameRec){
@@ -42,31 +42,31 @@ try {
         VMnameRec = true;
       }
     });
-    // try {
+    try {
 
-    //     console.log('Opening a new TCP connection to n1...');
-    //     const tcpsock = net.createConnection({ port: 8081, host: '10.0.0.11' }, () => {
-    //       console.log('Connected to TCP server');
-    //     });
+        console.log('Opening a new TCP connection to n1...');
+        const tcpsock = net.createConnection({ port: 8081, host: '10.0.0.11' }, () => {
+          console.log('Connected to TCP server');
+        });
       
 
 
-    //     tcpsock.on('end', () => {
-    //       console.log('Disconnected from TCP server');
-    //     });
+        tcpsock.on('end', () => {
+          console.log('Disconnected from TCP server');
+        });
 
-    //     tcpsock.on('error', (error) => {
-    //       console.error('Failed to connect to TCP server:', error.message);
-    //     });
-    //     tcpsock.on('data', (data) => {
-    //       console.log('Data from TCP server: ' + data.toString());
-    //       ws.send(data); 
-    //     });
+        tcpsock.on('error', (error) => {
+          console.error('Failed to connect to TCP server:', error.message);
+        });
+        tcpsock.on('data', (data) => {
+          console.log('Data from TCP server: ' + data.toString());
+          ws.send(data); 
+        });
 
 
-    //   } catch (error) {
-    //     console.error('tcp error:', error.message);
-    //   }
+      } catch (error) {
+        console.error('tcp error:', error.message);
+      }
 
 
   });
