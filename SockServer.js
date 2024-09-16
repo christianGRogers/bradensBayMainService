@@ -1,15 +1,24 @@
-const WebSocket = require('wss');
+const WebSocket = require('ws');
 const net = require('net');
+const https = require('https');
+const fs = require('fs');
 
 try {
-  const websock = new WebSocket.Server({ port: 8080 });
+  // Load SSL certificates
+  const server = https.createServer({
+    cert: fs.readFileSync('/etc/ssl/certs/ssl-cert-snakeoil.pem'),  // Path to your SSL certificate
+    key: fs.readFileSync('/etc/ssl/private/ssl-cert-snakeoil.key')     // Path to your SSL private key
+  });
+
+  // Create the WebSocket server using WSS (WebSocket over HTTPS)
+  const websock = new WebSocket.Server({ server });
 
   websock.on('error', (error) => {
     console.error('WebSocket server failed to start:', error.message);
   });
 
   websock.on('listening', () => {
-    console.log('WebSocket server is running on port 8080.');
+    console.log('WSS WebSocket server is running.');
   });
 
   // Handle WebSocket client connections
@@ -21,7 +30,6 @@ try {
       console.log('Connected to TCP server');
     });
 
-    
     ws.on('message', function incoming(message) {
       console.log('Received from WebSocket client: %s', message);
 
@@ -67,6 +75,11 @@ try {
     tcpsock.on('end', () => {
       console.log('Disconnected from TCP server');
     });
+  });
+
+  // Start the HTTPS server
+  server.listen(8080, () => {
+    console.log('WSS server listening on port 8080');
   });
 
 } catch (error) {
