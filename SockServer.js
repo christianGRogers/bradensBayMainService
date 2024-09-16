@@ -22,48 +22,48 @@ try {
   websock.on('error', (error) => {
     console.error('WebSocket client error:', error.message);
   });
- 
+  
+  websock.on('message', function incoming(message) {
+    console.log('Received from WebSocket client: %s', message);
+    if(VMnameRec){
+      tcpsock.write(message);
+    }
+    else{
+      const postData = {
+        vm: message
+      };
+      const response = axios.post('http://10.0.0.11:8081', postData); 
+      console.log('POST request successful. Response:', response.data);
+      VMnameRec = true;
+    }
+  });
   websock.on('connection', async function connection(ws) {
     var VMnameRec = false;
-    websock.on('message', function incoming(message) {
-      console.log('Received from WebSocket client: %s', message);
-      if(VMnameRec){
-        tcpsock.write(message);
-      }
-      else{
-        const postData = {
-          vm: message
-        };
-        const response = axios.post('http://10.0.0.11:8081', postData); 
-        console.log('POST request successful. Response:', response.data);
-        VMnameRec = true;
-      }
-    });
-    try {
+    // try {
 
-        console.log('Opening a new TCP connection to n1...');
-        const tcpsock = net.createConnection({ port: 8081, host: '10.0.0.11' }, () => {
-          console.log('Connected to TCP server');
-        });
+    //     console.log('Opening a new TCP connection to n1...');
+    //     const tcpsock = net.createConnection({ port: 8081, host: '10.0.0.11' }, () => {
+    //       console.log('Connected to TCP server');
+    //     });
       
 
 
-        tcpsock.on('end', () => {
-          console.log('Disconnected from TCP server');
-        });
+    //     tcpsock.on('end', () => {
+    //       console.log('Disconnected from TCP server');
+    //     });
 
-        tcpsock.on('error', (error) => {
-          console.error('Failed to connect to TCP server:', error.message);
-        });
-        tcpsock.on('data', (data) => {
-          console.log('Data from TCP server: ' + data.toString());
-          ws.send(data); 
-        });
+    //     tcpsock.on('error', (error) => {
+    //       console.error('Failed to connect to TCP server:', error.message);
+    //     });
+    //     tcpsock.on('data', (data) => {
+    //       console.log('Data from TCP server: ' + data.toString());
+    //       ws.send(data); 
+    //     });
 
 
-      } catch (error) {
-        console.error('tcp error:', error.message);
-      }
+    //   } catch (error) {
+    //     console.error('tcp error:', error.message);
+    //   }
 
 
   });
