@@ -122,7 +122,7 @@
             function sendCommand(command) {
                 // Send command through WebSocket
                 if (socket.readyState === WebSocket.OPEN) {
-                    socket.send(command);
+                    socket.write(command);
                 } else {
                     console.error("WebSocket is not open");
                 }
