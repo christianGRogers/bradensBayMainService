@@ -134,6 +134,7 @@
 
             socket.onmessage = (event) => {
                 var output = event.data;
+                console.log(output);
                 output = awaitPromis(output);
                 displayOutput(output);
             };
