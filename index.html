@@ -90,13 +90,13 @@
                     email = command;
                     state = "awaitingPassword";
                     document.getElementById("terminal__prompt--user").innerText = "password:";
-                    const inputElement = document.getElementById('terminal__prompt--user').type = 'password';
+                    document.getElementById('terminal__input').type = 'password';
 
                 } else if (state === "awaitingPassword") {
                     password = command;
                     loginUser();
                 } else if (state === "loggedIn") {
-                    const inputElement = document.getElementById('terminal__prompt--user').type = 'text';
+                    document.getElementById('terminal__input').type = 'text';
                     sendCommand(command);  // Send command to VM
                 }
             }
