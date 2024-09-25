@@ -1,54 +1,58 @@
-// getUserData.js
+// Node.js backend using Firebase Admin SDK for listing users and executing bash scripts
 const admin = require('firebase-admin');
+const express = require('express');
 const { exec } = require('child_process');
+const app = express();
+const port = 3000;
 
+// Path to the Firebase service account key file
+const serviceAccount = require('key/bradensbay-1720893101514-firebase-adminsdk-5czfh-9bee707839.json');
 
-// Initialize Firebase Admin SDK
+// Initialize Firebase Admin SDK with service account
 admin.initializeApp({
-  credential: admin.credential.applicationDefault(),
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://bradensbay-1720893101514.firebaseio.com"
 });
 
-// Function to get all users
-async function getUsers() {
-  let users = [];
-  let listUsersResult = await admin.auth().listUsers();
-  
-  listUsersResult.users.forEach(userRecord => {
-    // Capture UID and email (or displayName if applicable)
-    const uid = userRecord.uid;
-    const username = userRecord.email || userRecord.displayName || 'unknown';
+// Endpoint to list users from Firebase Authentication
+app.get('/list-users', async (req, res) => {
+  try {
+    let users = [];
+    let listUsersResult = await admin.auth().listUsers();
 
-    users.push({ uid, username });
-  });
+    listUsersResult.users.forEach(userRecord => {
+      const uid = userRecord.uid;
+      const username = userRecord.email || userRecord.displayName || 'unknown';
+      users.push({ uid, username });
+    });
 
-  return users;
-}
+    res.json(users);
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).send('Error fetching users');
+  }
+});
 
-// Run bash script with UID and username as arguments
-function runBashScript(uid, username) {
-  const script = `./newUser.sh '${uid}' '${username}'`;
+// Endpoint to run a bash script for a specific user
+app.get('/run-bash-script', (req, res) => {
+  const { uid, username } = req.query;
+
+  // Execute bash script with UID and username as arguments
+  const script = `./myScript.sh '${uid}' '${username}'`;
   exec(script, (error, stdout, stderr) => {
     if (error) {
       console.error(`Error executing script: ${error.message}`);
-      return;
+      return res.status(500).send('Error executing script');
     }
     if (stderr) {
       console.error(`Script stderr: ${stderr}`);
-      return;
+      return res.status(500).send('Script error');
     }
     console.log(`Script output: ${stdout}`);
+    res.send('Script executed successfully');
   });
-}
+});
 
-// Main function
-async function main() {
-  const users = await getUsers();
-
-  // Iterate over users and pass UID/username to the bash script
-  users.forEach(user => {
-    runBashScript(user.uid, user.username);
-  });
-}
-
-// Execute the main function
-main().catch(console.error);
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
