@@ -9,6 +9,8 @@ fi
 UID=$1
 EMAIL=$2
 
+USERNAME="${EMAIL%@*}"
+
 
 # Create an LXD VM with the specified name
 echo "Creating LXD VM: $UID"
@@ -24,8 +26,8 @@ lxc exec $UID -- bash -c "export http_proxy=http://10.0.0.11:3128; apt install -
 
 # Create the folder named by the argument in /var/www/html and move index.html into that folder
 echo "Setting up Apache2 directory structure"
-lxc exec $UID -- bash -c "mkdir -p /var/www/html/$EMAIL"
-lxc exec $UID -- bash -c "mv /var/www/html/index.html /var/www/html/$EMAIL/"
+lxc exec $UID -- bash -c "mkdir -p /var/www/html/$USERNAME"
+lxc exec $UID -- bash -c "mv /var/www/html/index.html /var/www/html/$USERNAME/"
 
 # Get the LXD VM IP address
 VM_IP=$(lxc list $UID -c 4 | grep enp5s0 | awk '{print $2}')
@@ -38,7 +40,7 @@ server {
     listen 81;
     server_name bradensbay.com;
 
-    location /$EMAIL {
+    location /$USERNAME {
         proxy_pass http://$VM_IP:80;
 EOL
 
