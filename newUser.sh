@@ -2,31 +2,31 @@
 
 
 
-UID=$1
+USER_ID=$1
 EMAIL=$2
 
 USERNAME="${EMAIL%@*}"
 
 
 # Create an LXD VM with the specified name
-echo "Creating LXD VM: $UID"
+echo "Creating LXD VM: $USER_ID"
 
-lxc launch ubuntu:focal $UID --vm --config image.architecture=amd64 --config image.description="Ubuntu focal amd64 (20240724_0023)" --config image.os=Ubuntu --config image.release=focal --config image.serial="20240724_0023" --config image.type=disk-kvm.img --config image.variant=desktop
+lxc launch ubuntu:focal $USER_ID --vm --config image.architecture=amd64 --config image.description="Ubuntu focal amd64 (20240724_0023)" --config image.os=Ubuntu --config image.release=focal --config image.serial="20240724_0023" --config image.type=disk-kvm.img --config image.variant=desktop
 # Wait for the VM to start (if it dose not start in 20 sec ur cooooked)
 sleep 20
 
 # Install Apache2 on the LXD VM
-echo "Installing Apache2 on the LXD VM: $UID"
-lxc exec $UID -- bash -c "export http_proxy=http://10.0.0.11:3128; apt update"
-lxc exec $UID -- bash -c "export http_proxy=http://10.0.0.11:3128; apt install -y apache2"
+echo "Installing Apache2 on the LXD VM: $USER_ID"
+lxc exec $USER_ID -- bash -c "export http_proxy=http://10.0.0.11:3128; apt update"
+lxc exec $USER_ID -- bash -c "export http_proxy=http://10.0.0.11:3128; apt install -y apache2"
 
 # Create the folder named by the argument in /var/www/html and move index.html into that folder
 echo "Setting up Apache2 directory structure"
-lxc exec $UID -- bash -c "mkdir -p /var/www/html/$USERNAME"
-lxc exec $UID -- bash -c "mv /var/www/html/index.html /var/www/html/$USERNAME/"
+lxc exec $USER_ID -- bash -c "mkdir -p /var/www/html/$USERNAME"
+lxc exec $USER_ID -- bash -c "mv /var/www/html/index.html /var/www/html/$USERNAME/"
 
 # Get the LXD VM IP address
-VM_IP=$(lxc list $UID -c 4 | grep enp5s0 | awk '{print $2}')
+VM_IP=$(lxc list $USER_ID -c 4 | grep enp5s0 | awk '{print $2}')
 
 # Append to the Nginx configuration file
 NGINX_CONFIG="/etc/nginx/sites-available/bradensbay.com"
@@ -68,4 +68,4 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-echo "Script completed successfully. The LXD VM '$UID' has been created, and Apache2 has been configured."
+echo "Script completed successfully. The LXD VM '$USER_ID' has been created, and Apache2 has been configured."
