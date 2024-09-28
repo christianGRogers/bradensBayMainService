@@ -1,10 +1,6 @@
 #!/bin/bash
 
-# Ensure script is run with one argument
-if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 <vm-name>"
-    exit 1
-fi
+
 
 UID=$1
 EMAIL=$2
