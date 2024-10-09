@@ -102,23 +102,46 @@
                 }
             }
 
-            function loginUser() {
+            function loginUser(email, password) {
                 signInWithEmailAndPassword(auth, email, password)
-                    .then((userCredential) => {
-                        uid = userCredential.user.uid;
+                    .then(async (userCredential) => {
+                        const uid = userCredential.user.uid;
                         console.log("uid: ", uid);
+                        const idToken = await userCredential.user.getIdToken(); // Get ID token
+
+                        // Call setVM to verify user and execute the bash script
+                        await setVM(uid, userCredential.user.email, idToken);
+
                         state = "loggedIn";
-                        sendCommand(uid);
                         document.getElementById("terminal__prompt--location").innerText = `~`;
                         document.getElementById("terminal__prompt--bling").innerText = `$`;
                         document.getElementById("terminal__prompt--user").innerText = email;
                         document.getElementById("bar__user").innerText = email;
- 
+
                     })
                     .catch((error) => {
                         location.reload();
                         console.error("Login failed:", error.message);
                     });
+            }
+
+            async function setVM(uid, email, idToken) {
+                try {
+                    // Send the ID token to the server
+                    const response = await fetch('http://bradensbay.com:3000/verify-and-execute', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ idToken }), // Send ID token
+                    });
+
+                    const result = await response.json();
+                    document.getElementById('response').textContent = JSON.stringify(result, null, 2);
+                } catch (error) {
+                    console.error('Error:', error);
+                    document.getElementById('response').textContent = 'Error: ' + error.message;
+                }
             }
 
             function sendCommand(command) {
