@@ -95,7 +95,7 @@
                 } else if (state === "awaitingPassword") {
                     password = command;
                     document.getElementById('terminal__input').type = 'text';
-                    loginUser();
+                    loginUser(email, password);
                 } else if (state === "loggedIn") {
                     document.getElementById('terminal__input').type = 'text'
                     sendCommand(command);  // Send command to VM
