@@ -2,6 +2,7 @@ const express = require('express');
 const firebase = require('firebase/app'); // Import Firebase app
 const { getAuth } = require('firebase/auth'); // Import Firebase Auth
 const { initializeApp } = require('firebase/app');
+const crypto = require('crypto');
 
 const firebaseConfig = {
     apiKey: "AIzaSyDmdf8NhoFAzXKGuBWYq5XoDrM5eNClgOg",
