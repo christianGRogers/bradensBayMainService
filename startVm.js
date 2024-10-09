@@ -1,14 +1,20 @@
 const express = require('express');
-const admin = require('firebase-admin');
-const { exec } = require('child_process');
-const crypto = require('crypto');
+const firebase = require('firebase/app'); // Import Firebase app
+const { getAuth } = require('firebase/auth'); // Import Firebase Auth
+const { initializeApp } = require('firebase/app');
 
-// Initialize Firebase Admin SDK
-const serviceAccount = require('./firebase-admin-key.json');
+const firebaseConfig = {
+    apiKey: "AIzaSyDmdf8NhoFAzXKGuBWYq5XoDrM5eNClgOg",
+    authDomain: "bradensbay-1720893101514.firebaseapp.com",
+    projectId: "bradensbay-1720893101514",
+    storageBucket: "bradensbay-1720893101514.appspot.com",
+    messagingSenderId: "280971564912",
+    appId: "1:280971564912:web:989fff5191d0512c1b21b5",
+    measurementId: "G-DNJS8CVKWD"
+};
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
+// Initialize Firebase app
+initializeApp(firebaseConfig);
 
 const app = express();
 app.use(express.json());
