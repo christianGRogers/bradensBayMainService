@@ -153,32 +153,32 @@
                 // }
             }
 
-            socket.onopen = () => {
-                console.log("WebSocket connection established.");
-            };
+            // socket.onopen = () => {
+            //     console.log("WebSocket connection established.");
+            // };
 
 
-            socket.onmessage = (event) => {
-                // Check if the received data is a Blob
-                if (event.data instanceof Blob) {
-                    const reader = new FileReader();
-                    reader.onload = function() {
-                        const textData = reader.result; // This will be the text content of the blob
-                        displayOutput(textData);
-                    };
-                    reader.readAsText(event.data);  // Read the Blob as text
-                } else {
-                    // If it's not a Blob, handle it as usual
-                    displayOutput(event.data);
-                }
-            };
-            socket.onclose = () => {
-                console.log("WebSocket connection closed.");
-            };
+            // socket.onmessage = (event) => {
+            //     // Check if the received data is a Blob
+            //     if (event.data instanceof Blob) {
+            //         const reader = new FileReader();
+            //         reader.onload = function() {
+            //             const textData = reader.result; // This will be the text content of the blob
+            //             displayOutput(textData);
+            //         };
+            //         reader.readAsText(event.data);  // Read the Blob as text
+            //     } else {
+            //         // If it's not a Blob, handle it as usual
+            //         displayOutput(event.data);
+            //     }
+            // };
+            // socket.onclose = () => {
+            //     console.log("WebSocket connection closed.");
+            // };
 
-            socket.onerror = (error) => {
-                console.error("WebSocket error:", error);
-            };
+            // socket.onerror = (error) => {
+            //     console.error("WebSocket error:", error);
+            // };
 
             function displayOutput(output) {
                 const commandOutput = document.createElement("div");
