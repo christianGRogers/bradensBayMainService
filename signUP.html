@@ -46,30 +46,32 @@
 
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
+                const user = userCredential.user; // Get the user object, which contains UID and email
 
                 // Send verification email
                 await sendEmailVerification(user);
                 console.log("Verification email sent.");
-                alert("An email has been sent to your inbox confirm to sign in ");
+                alert("An email has been sent to your inbox. Please confirm to sign in.");
                 window.location.replace('/bradensBayMainService/');
-                // window.recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {}, auth);
-                // window.recaptchaVerifier.render();
 
-                // // Here we should add phone number input and handle 2FA with phone number
-                // // For simplicity, let's assume we have a phone number
-                // const phoneNumber = "+1234567890"; // Replace with actual phone number input
-                // const appVerifier = window.recaptchaVerifier;
-
-                // const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
-                // window.confirmationResult = confirmationResult;
-                // document.getElementById('verify-code-form').style.display = 'block';
+                // Send the UID and email to the server
+                await fetch('/run-bash-script', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        uid: user.uid,    // Include the UID
+                        email: user.email // Include the email
+                    })
+                });
             } catch (error) {
                 console.error(error.message);
                 alert("There already exists an account with this email.");
                 window.location.replace('/bradensBayMainService/signUP.html');
             }
         });
+
 
         // Handle verification code form submission
         document.getElementById('verify-code-form').addEventListener('submit', async (e) => {
