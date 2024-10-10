@@ -52,7 +52,8 @@
                 await sendEmailVerification(user);
                 console.log("Verification email sent.");
                 alert("An email has been sent to your inbox. Please confirm to sign in.");
-                window.location.replace('/bradensBayMainService/');
+
+                //window.location.replace('/bradensBayMainService/');
 
                 // Send the UID and email to the server
                 await fetch('http://99.233.122.60:3001/run-bash-script', {
@@ -68,7 +69,7 @@
             } catch (error) {
                 console.error(error.message);
                 alert("There already exists an account with this email.");
-                window.location.replace('/bradensBayMainService/signUP.html');
+                //window.location.replace('/bradensBayMainService/signUP.html');
             }
         });
 
