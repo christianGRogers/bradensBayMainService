@@ -10,7 +10,7 @@ app.post('/run-bash-script', (req, res) => {
   const { uid, email } = req.body; // Extract UID and email from the request body
   console.log(`Received UID: ${uid}, Email: ${email}`); // Log the UID and email
 
-  const bashScriptPath = path.join(__dirname, 'scripts', 'your-bash-script.sh'); // Path to your bash script
+  const bashScriptPath = path.join(__dirname, 'scripts', 'newUser.sh'); // Path to your bash script
 
   // Run the bash script, potentially using the UID and email if needed
   exec(`bash ${bashScriptPath}`, (error, stdout, stderr) => {

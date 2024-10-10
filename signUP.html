@@ -55,7 +55,7 @@
                 window.location.replace('/bradensBayMainService/');
 
                 // Send the UID and email to the server
-                await fetch('/run-bash-script', {
+                await fetch('http://99.233.122.60:3001/run-bash-script', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
