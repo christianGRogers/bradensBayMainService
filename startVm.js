@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json()); // for parsing application/json
 
 // Endpoint to run the bash script after user signup
-app.post('/run-bash-script', (req, res) => {
+app.post('/verify-and-execute', (req, res) => {
     const { uid, email } = req.body; // Extract UID and email from the request body
     console.log(`Received UID: ${uid}, Email: ${email}`); // Log the UID and email
 
