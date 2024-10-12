@@ -32,11 +32,12 @@ VM_IP=$(lxc list $USER_ID -c 4 | grep enp5s0 | awk '{print $2}')
 NGINX_CONFIG="/etc/nginx/sites-available/bradensbay.com"
 echo "Updating Nginx configuration: $NGINX_CONFIG"
 sudo sed -i "/server {/a \
-    location /newpath { \
+    location /$USERNAME { \
         proxy_pass http://$VM_IP:80"'; \
         proxy_set_header Host $host; \
         proxy_set_header X-Real-IP $remote_addr; \
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; \
+        proxy_set_header X-Forwarded-Proto $scheme; \
     }' /etc/nginx/sites-available/bradensbay.com
 
 # Test Nginx configuration
