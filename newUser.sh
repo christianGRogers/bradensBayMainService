@@ -31,7 +31,7 @@ VM_IP=$(lxc list $USER_ID -c 4 | grep enp5s0 | awk '{print $2}')
 # Append to the Nginx configuration file
 NGINX_CONFIG="/etc/nginx/sites-available/bradensbay.com"
 echo "Updating Nginx configuration: $NGINX_CONFIG"
-sudo bash -c "cat <<EOL > $NGINX_CONFIG
+sudo bash -c "cat <<EOL >> $NGINX_CONFIG
 server {
     listen 81;
     server_name bradensbay.com;
