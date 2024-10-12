@@ -1,16 +1,18 @@
 const express = require('express');
-const { exec } = require('child_process'); // Import child_process to execute bash scripts
+const cors = require('cors'); // Import the CORS library
+const { exec } = require('child_process');
 const app = express();
+
+// Enable CORS for all routes and origins
+app.use(cors());
 
 // Middleware to parse JSON bodies
 app.use(express.json());
 
 // Define a POST endpoint at '/endpoint'
 app.post('/endpoint', (req, res) => {
-    // Access the JSON data sent in the request body
     const { uid, email } = req.body;
 
-    // Log the received data
     console.log('Received JSON:', { uid, email });
 
     // Execute the Bash script and pass uid and email as arguments
@@ -24,10 +26,7 @@ app.post('/endpoint', (req, res) => {
             return res.status(500).json({ message: 'Script error', error: stderr });
         }
 
-        // Output from the script
         console.log(`Script output: ${stdout}`);
-
-        // Send success response
         res.status(200).json({
             message: 'Script executed successfully!',
             scriptOutput: stdout
@@ -35,7 +34,6 @@ app.post('/endpoint', (req, res) => {
     });
 });
 
-// Set the server to listen on port 3000
 const PORT = 3001;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
