@@ -1,38 +1,42 @@
 const express = require('express');
-const cors = require('cors'); // Import CORS
-const { exec } = require('child_process');
-const path = require('path');
+const { exec } = require('child_process'); // Import child_process to execute bash scripts
 const app = express();
 
-// Enable CORS for all routes
-app.use(cors());
+// Middleware to parse JSON bodies
+app.use(express.json());
 
-app.use(express.json()); // for parsing application/json
+// Define a POST endpoint at '/endpoint'
+app.post('/endpoint', (req, res) => {
+    // Access the JSON data sent in the request body
+    const { uid, email } = req.body;
 
-// Endpoint to run the bash script after user signup
-app.post('/verify-and-execute', (req, res) => {
-    const { uid, email } = req.body; // Extract UID and email from the request body
-    console.log(`Received UID: ${uid}, Email: ${email}`); // Log the UID and email
+    // Log the received data
+    console.log('Received JSON:', { uid, email });
 
-    const bashScriptPath = path.join(__dirname, '/', 'newUser.sh'); // Path to your bash script
-
-    // Run the bash script
-    exec(`bash ${bashScriptPath}`, (error, stdout, stderr) => {
+    // Execute the Bash script and pass uid and email as arguments
+    exec(`./newUser.sh ${uid} ${email}`, (error, stdout, stderr) => {
         if (error) {
             console.error(`Error executing script: ${error.message}`);
-            return res.status(500).json({ message: 'Failed to run script' });
+            return res.status(500).json({ message: 'Error executing script', error: error.message });
         }
-
         if (stderr) {
-            console.error(`Script error output: ${stderr}`);
-            return res.status(500).json({ message: 'Script ran with errors' });
+            console.error(`Script stderr: ${stderr}`);
+            return res.status(500).json({ message: 'Script error', error: stderr });
         }
 
+        // Output from the script
         console.log(`Script output: ${stdout}`);
-        res.status(200).json({ message: 'Script executed successfully', output: stdout });
+
+        // Send success response
+        res.status(200).json({
+            message: 'Script executed successfully!',
+            scriptOutput: stdout
+        });
     });
 });
 
-app.listen(3001, () => {
-    console.log('Server running on port 3001');
+// Set the server to listen on port 3000
+const PORT = 3001;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });

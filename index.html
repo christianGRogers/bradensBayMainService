@@ -126,23 +126,28 @@
                     });
             }
 
-            async function setVM(uid, email, idToken) {
-                try {
-                    // Send the ID token to the server
-                    const response = await fetch('http://10.0.0.11:3001/verify-and-execute', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ idToken }), // Send ID token
-                    });
+            function sendUserData(uid, email) {
+                // Create the JSON data to send
+                const data = {
+                    uid: uid,
+                    email: email
+                };
 
-                    const result = await response.json();
-                    document.getElementById('response').textContent = JSON.stringify(result, null, 2);
-                } catch (error) {
+                // Send a POST request to the server
+                fetch('http://10.0.0.11:3001/endpoint', {
+                    method: 'POST', // Use POST request
+                    headers: {
+                        'Content-Type': 'application/json', // Send JSON data
+                    },
+                    body: JSON.stringify(data) // Convert JavaScript object to JSON string
+                })
+                .then(response => response.json()) // Parse the JSON response
+                .then(result => {
+                    console.log('Success:', result);
+                })
+                .catch(error => {
                     console.error('Error:', error);
-                    document.getElementById('response').textContent = 'Error: ' + error.message;
-                }
+                });
             }
 
             function sendCommand(command) {
