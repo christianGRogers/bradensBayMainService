@@ -4,6 +4,7 @@
 
 USER_ID=$1
 EMAIL=$2
+LISTEN_PORT=$3
 
 USERNAME="${EMAIL%@*}"
 
@@ -69,5 +70,43 @@ fi
 # Print the new user's details
 echo "User '$USERNAME' has been created on LXD VM '$USER_ID'."
 echo "Password: $PASSWORD"
+
+
+LISTEN_IP="10.0.0.11"
+
+
+NGINX_CONF="/etc/nginx/nginx.conf"  # Adjust this path if needed
+
+# Check if both arguments are provided
+if [ -z "$LISTEN_PORT" ] || [ -z "$VM_IP" ]; then
+    echo "Usage: ./add_vm_proxy.sh <listen_port> <vm_ip>"
+    exit 1
+fi
+
+# Create the server block configuration
+NEW_SERVER_BLOCK="
+    server {
+        listen ${LISTEN_IP}:${LISTEN_PORT};
+        proxy_pass ${VM_IP}:22;
+        proxy_protocol on;  # Optional: Pass client IP information
+    }
+"
+
+# Append the new server block to the existing stream section in nginx.conf
+# Ensure the configuration file already has a `stream` block
+if grep -q "stream {" "$NGINX_CONF"; then
+    # Append before the closing '}' of the stream block
+    sed -i "/^}/i${NEW_SERVER_BLOCK}" "$NGINX_CONF"
+    echo "Added new VM proxy configuration to ${NGINX_CONF}:"
+    echo "$NEW_SERVER_BLOCK"
+else
+    echo "Error: No 'stream' block found in ${NGINX_CONF}. Please ensure it exists."
+    exit 1
+fi
+
+# Test and reload NGINX configuration
+sudo nginx -t && sudo systemctl reload nginx
+
+echo "NGINX configuration reloaded."
 
 echo "Script completed successfully. The LXD VM '$USER_ID' has been created, and Apache2 has been configured."
