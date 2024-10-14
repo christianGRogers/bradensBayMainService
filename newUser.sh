@@ -106,6 +106,9 @@ fi
 # Test and reload NGINX configuration
 sudo nginx -t && sudo systemctl reload nginx
 
+
 echo "NGINX configuration reloaded."
+
+sudo ufw allow $LISTEN_PORT
 
 echo "Script completed successfully. The LXD VM '$USER_ID' has been created, and Apache2 has been configured."
