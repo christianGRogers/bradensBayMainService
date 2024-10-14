@@ -32,7 +32,7 @@ VM_IP=$(lxc list $USER_ID -c 4 | grep enp5s0 | awk '{print $2}')
 # Append to the Nginx configuration file
 NGINX_CONFIG="/etc/nginx/sites-available/bradensbay.com"
 echo "Updating Nginx configuration: $NGINX_CONFIG"
-sudo sed -i "/server {/a \
+sudo sed -i "server_name bradensbay.com;/a \
     location /$USERNAME { \
         proxy_pass http://$VM_IP:80"'; \
         proxy_set_header Host $host; \
