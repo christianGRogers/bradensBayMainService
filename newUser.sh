@@ -57,11 +57,10 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# Generate a random password
 PASSWORD=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 12)
 
 # Create the new user on the LXD VM
-lxc exec "$USER_ID" -- bash -c "useradd -m $USERNAME && echo '$USERNAME:$PASSWORD' | chpasswd"
+lxc exec "$USER_ID" -- bash -c "useradd -m -G sudo $USERNAME && echo '$USERNAME:$PASSWORD' | chpasswd"
 if [ $? -ne 0 ]; then
     echo "Failed to add user '$USERNAME' on LXD VM '$USER_ID'."
     exit 1
@@ -70,6 +69,7 @@ fi
 # Print the new user's details
 echo "User '$USERNAME' has been created on LXD VM '$USER_ID'."
 echo "Password: $PASSWORD"
+
 
 
 LISTEN_IP="10.0.0.11"
@@ -88,7 +88,6 @@ NEW_SERVER_BLOCK="
     server {
         listen ${LISTEN_IP}:${LISTEN_PORT};
         proxy_pass ${VM_IP}:22;
-        proxy_protocol on;  # Optional: Pass client IP information
     }
 "
 
