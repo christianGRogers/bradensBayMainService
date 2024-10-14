@@ -12,6 +12,6 @@ PUBLIC_KEY=$2
 
 
 # Write the public key to the authorized_keys file inside the container
-lxc exec -u root $USER_ID bash -c "mkdir -p ~/.ssh && echo \"$PUBLIC_KEY\" >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys && chmod 700 ~/.ssh"
+lxc exec -u christian $USER_ID bash -c "mkdir -p ~/.ssh && echo \"$PUBLIC_KEY\" >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys && chmod 700 ~/.ssh"
 
 echo "Public key added to container $USER_ID."
