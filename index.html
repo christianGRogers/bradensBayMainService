@@ -63,6 +63,7 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const database = firebase.database();
         
         //const socket = new WebSocket("ws://bradensbay.com:8080");
         
@@ -153,26 +154,26 @@
                 });
             }
 
-            const database = app.database();
+            
 
-        async function getUserCredentials(uid) {
-            try {
-                const userRef = database.ref(`users/${uid}`);
-                
-                // Retrieve data from Firebase
-                const snapshot = await userRef.get();
-                
-                if (snapshot.exists()) {
-                    const { port, password } = snapshot.val();
-                    return { port, password };
-                } else {
-                    throw new Error(`No data found for UID: ${uid}`);
+            async function getUserCredentials(uid) {
+                try {
+                    const userRef = database.ref(`users/${uid}`);
+                    
+                    // Retrieve data from Firebase
+                    const snapshot = await userRef.get();
+                    
+                    if (snapshot.exists()) {
+                        const { port, password } = snapshot.val();
+                        return { port, password };
+                    } else {
+                        throw new Error(`No data found for UID: ${uid}`);
+                    }
+                } catch (error) {
+                    console.error('Error retrieving user credentials:', error.message);
+                    throw error; // Re-throw to handle it in the calling function
                 }
-            } catch (error) {
-                console.error('Error retrieving user credentials:', error.message);
-                throw error; // Re-throw to handle it in the calling function
             }
-        }
 
             function displayOutput(output) {
                 const commandOutput = document.createElement("div");
