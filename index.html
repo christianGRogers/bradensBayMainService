@@ -38,6 +38,11 @@
             
         </div>
     </main>
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app.js"></script>
+    <!-- Firebase Realtime Database -->
+    <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-database.js"></script>
+
 
     <script type="module">
 
@@ -148,25 +153,27 @@
                 });
             }
 
-            async function getUserCredentials(uid) {
-                try {
-                    const database = getDatabase(); // Assuming Firebase has been initialized
-                    const userRef = ref(database, `users/${uid}`);
-                    
-                    // Retrieve data from Firebase
-                    const snapshot = await get(userRef);
-                    
-                    if (snapshot.exists()) {
-                        const { port, password } = snapshot.val();
-                        return { port, password };
-                    } else {
-                        throw new Error(`No data found for UID: ${uid}`);
-                    }
-                } catch (error) {
-                    console.error('Error retrieving user credentials:', error.message);
-                    throw error; // Re-throw to handle it in the calling function
+            const database = firebase.database();
+
+// Function to retrieve port and password based on UID
+        async function getUserCredentials(uid) {
+            try {
+                const userRef = database.ref(`users/${uid}`);
+                
+                // Retrieve data from Firebase
+                const snapshot = await userRef.get();
+                
+                if (snapshot.exists()) {
+                    const { port, password } = snapshot.val();
+                    return { port, password };
+                } else {
+                    throw new Error(`No data found for UID: ${uid}`);
                 }
+            } catch (error) {
+                console.error('Error retrieving user credentials:', error.message);
+                throw error; // Re-throw to handle it in the calling function
             }
+        }
 
             function displayOutput(output) {
                 const commandOutput = document.createElement("div");
