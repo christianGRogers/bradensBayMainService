@@ -157,10 +157,10 @@
 
             async function getUserCredentials(uid) {
                 try {
-                    const userRef = database.ref(`users/${uid}`);
+                    const userRef = ref(database, `users/${uid}`);  // Use ref directly from the database instance
                     
                     // Retrieve data from Firebase
-                    const snapshot = await userRef.get();
+                    const snapshot = await get(userRef);
                     
                     if (snapshot.exists()) {
                         const { port, password } = snapshot.val();
