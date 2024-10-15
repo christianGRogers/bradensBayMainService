@@ -42,7 +42,7 @@ app.post('/endpoint', (req, res) => {
     console.log('Received JSON:', { uid, email });
 
     // Execute the Bash script and pass uid and email as arguments
-    exec(`./newUser.sh ${uid} ${email}`, (error, stdout, stderr) => {
+    exec(`sudo ./newUser.sh ${uid} ${email}`, (error, stdout, stderr) => {
         if (error) {
             console.error(`Error executing script: ${error.message}`);
             return res.status(500).json({ message: 'Error executing script', error: error.message });
