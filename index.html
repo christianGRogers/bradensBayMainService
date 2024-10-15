@@ -61,9 +61,9 @@
         };
 
         // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig); // Use firebase.initializeApp instead of initializeApp directly
-        const auth = firebase.getAuth(app); // Get the Auth instance
-        const database = firebase.getDatabase(app); // Correct way to get the database instance
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const database = getDatabase(app);
 
         //const socket = new WebSocket("ws://bradensbay.com:8080");
         
