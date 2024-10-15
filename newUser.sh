@@ -110,4 +110,4 @@ fi
 
 
 sudo ufw allow $LISTEN_PORT
-
+echo "$PASSWORD $LISTEN_PORT"

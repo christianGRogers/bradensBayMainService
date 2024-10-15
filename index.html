@@ -98,7 +98,7 @@
                     loginUser(email, password);
                 } else if (state === "loggedIn") {
                     document.getElementById('terminal__input').type = 'text'
-                    sendCommand(command);  // Send command to VM
+                    
                 }
             }
 
@@ -109,7 +109,7 @@
                         sendUserData(uid, email)
                         console.log("uid: ", uid);
                         const idToken = await userCredential.user.getIdToken(); // Get ID token
-
+                        displayOutput(await getUserCredentials(uid));
                         state = "loggedIn";
                         document.getElementById("terminal__prompt--location").innerText = `~`;
                         document.getElementById("terminal__prompt--bling").innerText = `$`;
@@ -148,41 +148,25 @@
                 });
             }
 
-            function sendCommand(command) {
-                // // Send command through WebSocket
-                // if (socket.readyState === WebSocket.OPEN) {
-                //     socket.send(command);
-                // } else {
-                //     console.error("WebSocket is not open");
-                // }
+            async function getUserCredentials(uid) {
+                try {
+                    const database = getDatabase(); // Assuming Firebase has been initialized
+                    const userRef = ref(database, `users/${uid}`);
+                    
+                    // Retrieve data from Firebase
+                    const snapshot = await get(userRef);
+                    
+                    if (snapshot.exists()) {
+                        const { port, password } = snapshot.val();
+                        return { port, password };
+                    } else {
+                        throw new Error(`No data found for UID: ${uid}`);
+                    }
+                } catch (error) {
+                    console.error('Error retrieving user credentials:', error.message);
+                    throw error; // Re-throw to handle it in the calling function
+                }
             }
-
-            // socket.onopen = () => {
-            //     console.log("WebSocket connection established.");
-            // };
-
-
-            // socket.onmessage = (event) => {
-            //     // Check if the received data is a Blob
-            //     if (event.data instanceof Blob) {
-            //         const reader = new FileReader();
-            //         reader.onload = function() {
-            //             const textData = reader.result; // This will be the text content of the blob
-            //             displayOutput(textData);
-            //         };
-            //         reader.readAsText(event.data);  // Read the Blob as text
-            //     } else {
-            //         // If it's not a Blob, handle it as usual
-            //         displayOutput(event.data);
-            //     }
-            // };
-            // socket.onclose = () => {
-            //     console.log("WebSocket connection closed.");
-            // };
-
-            // socket.onerror = (error) => {
-            //     console.error("WebSocket error:", error);
-            // };
 
             function displayOutput(output) {
                 const commandOutput = document.createElement("div");
