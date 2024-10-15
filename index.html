@@ -153,9 +153,8 @@
                 });
             }
 
-            const database = firebase.database();
+            const database = app.database();
 
-// Function to retrieve port and password based on UID
         async function getUserCredentials(uid) {
             try {
                 const userRef = database.ref(`users/${uid}`);
