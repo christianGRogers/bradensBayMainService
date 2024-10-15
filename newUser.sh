@@ -13,6 +13,11 @@ USERNAME="${EMAIL%@*}"
 echo "Creating LXD VM: $USER_ID"
 
 lxc launch ubuntu:focal $USER_ID --vm --config image.architecture=amd64 --config image.description="Ubuntu focal amd64 (20240724_0023)" --config image.os=Ubuntu --config image.release=focal --config image.serial="20240724_0023" --config image.type=disk-kvm.img --config image.variant=desktop
+if [ $? -ne 0 ]; then
+    exit 1
+fi
+
+
 # Wait for the VM to start (if it dose not start in 20 sec ur cooooked)
 sleep 40
 
@@ -30,10 +35,7 @@ PASSWORD=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 12)
 
 # Create the new user on the LXD VM
 lxc exec "$USER_ID" -- bash -c "useradd -m -G sudo $USERNAME && echo '$USERNAME:$PASSWORD' | chpasswd"
-if [ $? -ne 0 ]; then
-    echo "Failed to add user '$USERNAME' on LXD VM '$USER_ID'."
-    exit 1
-fi
+
 
 # Print the new user's details
 echo "User '$USERNAME' has been created on LXD VM '$USER_ID'."
@@ -83,12 +85,21 @@ NEW_SERVER_BLOCK="
         proxy_pass ${VM_IP}:22;
     }
 "
+LAST_PORT=$(grep -oP 'listen \K[0-9]+' /etc/nginx/nginx.conf | sort -n | tail -1)
+
+# Determine the next available port (increment by 1)
+if [[ -z "$LAST_PORT" ]]; then
+    LISTEN_PORT=8000 # Default start port if no existing ports are found
+else
+    LISTEN_PORT=$((LAST_PORT + 1))
+fi
+
+# Insert the new server block into the Nginx configuration
 sudo sed -i "/stream {/a \
     server {\
         listen ${LISTEN_IP}:${LISTEN_PORT};\
         proxy_pass ${VM_IP}:22;\
     }" /etc/nginx/nginx.conf
-
 
 sudo nginx -t && sudo systemctl reload nginx
 if [ $? -ne 0 ]; then
