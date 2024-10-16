@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors'); // Import the CORS library
-const { exec } = require('child_process');
+var exec = require('child_process').exec;
 const { initializeApp } = require('firebase/app');
 const { getDatabase, ref, set, update } = require('firebase/database');
 const app = express();
@@ -56,24 +56,24 @@ app.post('/endpoint', (req, res) => {
         res.status(500).json({ message: 'Error saving data to Firebase', error: error.message });
     });
     // Execute the Bash script and pass uid and email as arguments
-    // exec(`sudo ./newUser.sh ${uid} ${email}`, (error, stdout, stderr) => {
-    //     if (error) {
-    //         console.error(`Error executing script: ${error.message}`);
-    //         return res.status(500).json({ message: 'Error executing script', error: error.message });
-    //     }
-    //     if (stderr) {
-    //         console.error(`Script stderr: ${stderr}`);
-    //         return res.status(500).json({ message: 'Script error', error: stderr });
-    //     }
+    exec(`sudo ./newUser.sh ${uid} ${email}`, (error, stdout, stderr) => {
+        if (error) {
+            console.error(`Error executing script: ${error.message}`);
+            return res.status(500).json({ message: 'Error executing script', error: error.message });
+        }
+        if (stderr) {
+            console.error(`Script stderr: ${stderr}`);
+            return res.status(500).json({ message: 'Script error', error: stderr });
+        }
 
-    //     // Parse password and port from the script output
-    //     const [password, port] = stdout.trim().split(' ');
+        // Parse password and port from the script output
+        const [password, port] = stdout.trim().split(' ');
 
-    //     console.log(`Password: ${password}, Port: ${port}`);
+        console.log(`Password: ${password}, Port: ${port}`);
 
-    //     // Save the data to Firebase
+        // Save the data to Firebase
 
-    // });
+    });
 });
 
 const PORT = 3001;
