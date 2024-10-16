@@ -39,13 +39,16 @@ function updateUserData(uid, password, port) {
 function executeScript(uid, email) {
     return new Promise((resolve, reject) => {
         exec(`sudo /home/christian/bradensBayMainService/newUser.sh ${uid} ${email}`, { timeout: 120000 }, (error, stdout, stderr) => { // 2-minute timeout
+            console.log(`stdout: ${stdout}`);
+            console.log(`stderr: ${stderr}`);
             if (error) {
+                console.error(`Error executing script: ${error.message}`);
                 return reject(new Error(`Error executing script: ${error.message}`));
             }
             if (stderr) {
+                console.error(`Script error: ${stderr}`);
                 return reject(new Error(`Script error: ${stderr}`));
             }
-            // Parse password and port from the script output
             const [password, port] = stdout.trim().split(' ');
             resolve({ password, port });
         });
