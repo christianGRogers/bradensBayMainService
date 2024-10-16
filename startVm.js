@@ -41,7 +41,9 @@ app.post('/endpoint', (req, res) => {
     const { uid, email } = req.body;
 
     console.log('Received JSON:', { uid, email });
-    updateUserData(uid, "test", "1234")
+    var password = "test";
+    var port = "1234";
+    updateUserData(uid, password, port)
     .then(() => {
         res.status(200).json({
             message: 'Data saved and script executed successfully!',
