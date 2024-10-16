@@ -9,7 +9,7 @@ long_running_process() {
     echo "Starting long-running process for UID: $UID and EMAIL: $EMAIL"
     
     # Simulate a long process (e.g., 2-minute sleep for demo)
-    sudo newUser $UID $EMAIL
+    sudo ./newUser.sh $UID $EMAIL
     
     # Here you would put the actual commands that do the work
     echo "Long-running process completed for UID: $UID and EMAIL: $EMAIL"
