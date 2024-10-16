@@ -27,7 +27,6 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 const database = getDatabase(firebaseApp);
 
-
 function updateUserData(uid, password, port) {
     const userRef = ref(database, 'users/' + uid);
     return update(userRef, {
@@ -36,44 +35,46 @@ function updateUserData(uid, password, port) {
     });
 }
 
-// Define a POST endpoint at '/endpoint'
-app.post('/endpoint', (req, res) => {
-    const { uid, email } = req.body;
+// Function to execute the script with a timeout
+function executeScript(uid, email) {
+    return new Promise((resolve, reject) => {
+        exec(`sudo ./newUser.sh ${uid} ${email}`, { timeout: 120000 }, (error, stdout, stderr) => { // 2-minute timeout
+            if (error) {
+                return reject(new Error(`Error executing script: ${error.message}`));
+            }
+            if (stderr) {
+                return reject(new Error(`Script error: ${stderr}`));
+            }
+            // Parse password and port from the script output
+            const [password, port] = stdout.trim().split(' ');
+            resolve({ password, port });
+        });
+    });
+}
 
+// Define a POST endpoint at '/endpoint'
+app.post('/endpoint', async (req, res) => {
+    const { uid, email } = req.body;
     console.log('Received JSON:', { uid, email });
-    var password = "test";
-    var port = "1234";
-    updateUserData(uid, password, port)
-    .then(() => {
+
+    try {
+        // Execute the Bash script and handle the result
+        const { password, port } = await executeScript(uid, email);
+
+        // Update Firebase after the script successfully executes
+        await updateUserData(uid, password, port);
+
+        // Send a success response
         res.status(200).json({
             message: 'Data saved and script executed successfully!',
             password: password,
             port: port
         });
-    })
-    .catch((error) => {
-        console.error('Error saving data to Firebase:', error);
-        res.status(500).json({ message: 'Error saving data to Firebase', error: error.message });
-    });
-    // Execute the Bash script and pass uid and email as arguments
-    exec(`sudo ./newUser.sh ${uid} ${email}`, (error, stdout, stderr) => {
-        if (error) {
-            console.error(`Error executing script: ${error.message}`);
-            return res.status(500).json({ message: 'Error executing script', error: error.message });
-        }
-        if (stderr) {
-            console.error(`Script stderr: ${stderr}`);
-            return res.status(500).json({ message: 'Script error', error: stderr });
-        }
 
-        // Parse password and port from the script output
-        const [password, port] = stdout.trim().split(' ');
-
-        console.log(`Password: ${password}, Port: ${port}`);
-
-        // Save the data to Firebase
-
-    });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ message: 'Error processing request', error: error.message });
+    }
 });
 
 const PORT = 3001;
