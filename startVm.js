@@ -38,7 +38,7 @@ function updateUserData(uid, password, port) {
 // Function to execute the script with a timeout
 function executeScript(uid, email) {
     return new Promise((resolve, reject) => {
-        exec(`sudo ./newUser.sh ${uid} ${email}`, { timeout: 120000 }, (error, stdout, stderr) => { // 2-minute timeout
+        exec(`sudo /home/christian/bradensBayMainService/newUser.sh ${uid} ${email}`, { timeout: 120000 }, (error, stdout, stderr) => { // 2-minute timeout
             if (error) {
                 return reject(new Error(`Error executing script: ${error.message}`));
             }
