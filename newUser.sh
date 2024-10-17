@@ -89,7 +89,7 @@ LAST_PORT=$(grep -oP 'listen \K[0-9]+' /etc/nginx/nginx.conf | sort -n | tail -1
 
 # Determine the next available port (increment by 1)
 if [[ -z "$LAST_PORT" ]]; then
-    LISTEN_PORT=8000 # Default start port if no existing ports are found
+    LISTEN_PORT=2000 # Default start port if no existing ports are found
 else
     LISTEN_PORT=$((LAST_PORT + 1))
 fi

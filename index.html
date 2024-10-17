@@ -112,15 +112,15 @@
                 signInWithEmailAndPassword(auth, email, password)
                     .then(async (userCredential) => {
                         const uid = userCredential.user.uid;
-                        sendUserData(uid, email);
-                        console.log("uid: ", uid);
-                        const idToken = await userCredential.user.getIdToken(); // Get ID token
-                        displayOutput(await getUserCredentials(uid));
                         state = "loggedIn";
                         document.getElementById("terminal__prompt--location").innerText = `~`;
                         document.getElementById("terminal__prompt--bling").innerText = `$`;
                         document.getElementById("terminal__prompt--user").innerText = email;
                         document.getElementById("bar__user").innerText = email;
+                        sendUserData(uid, email);
+                        console.log("uid: ", uid);
+                        const idToken = await userCredential.user.getIdToken(); // Get ID token
+                        displayOutput(await getUserCredentials(uid));
 
                     })
                     .catch((error) => {

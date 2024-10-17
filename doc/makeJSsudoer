@@ -1,0 +1,10 @@
+Run:
+
+bash
+Copy code
+sudo visudo
+Add a line like:
+
+bash
+Copy code
+yourusername ALL=(ALL) NOPASSWD: /path/to/your-script.sh
