@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Get the UID and email from the arguments
-UID=$1
+USER_ID=$1
 EMAIL=$2
 
 # Function to run the long-running process
