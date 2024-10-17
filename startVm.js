@@ -38,6 +38,7 @@ function updateUserData(uid, password, port) {
 // Function to execute the script with a timeout
 function executeScript(uid, email) {
     return new Promise((resolve, reject) => {
+        console.log(uid)
         exec(`sudo /home/christian/bradensBayMainService/newUserSchedular.sh ${uid} ${email}`, { timeout: 120000 }, (error, stdout, stderr) => { // 2-minute timeout
             console.log(`stdout: ${stdout}`);
             console.log(`stderr: ${stderr}`);
