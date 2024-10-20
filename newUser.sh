@@ -64,16 +64,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-sudo systemctl restart nginx
 
-if [ $? -ne 0 ]; then
-    echo "Failed to restart Nginx after http"
-    exit 1
-fi
-
-
-
-##############################################
 
 
 LISTEN_IP="10.0.0.11"
