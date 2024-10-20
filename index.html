@@ -120,7 +120,7 @@
                         sendUserData(uid, email);
                         console.log("uid: ", uid);
                         const idToken = await userCredential.user.getIdToken(); // Get ID token
-                        displayOutput(await getUserCredentials(uid));
+                        displayOutput(await getUserCredentials(uid));0
 
                     })
                     .catch((error) => {
@@ -138,7 +138,7 @@
                 };
 
                 // Send a POST request to the server
-                fetch('http://bradensbay.com:3001/endpoint', {
+                fetch('http://10.0.0.11:3001/endpoint', {
                     method: 'POST', // Use POST request
                     headers: {
                         'Content-Type': 'application/json', // Send JSON data
