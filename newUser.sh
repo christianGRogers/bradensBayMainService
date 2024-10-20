@@ -76,7 +76,7 @@ NEW_SERVER_BLOCK="
         proxy_pass ${VM_IP}:22;
     }
 "
-LAST_PORT=$(grep -oP 'listen \K[0-9]+' /etc/nginx/nginx.conf | sort -n | tail -1)
+LAST_PORT=$(grep -oP 'listen ..........\K[0-9]+' /etc/nginx/nginx.conf | sort -n | tail -1)
 
 # Determine the next available port (increment by 1)
 if [[ -z "$LAST_PORT" ]]; then

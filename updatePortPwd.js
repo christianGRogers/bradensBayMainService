@@ -36,9 +36,10 @@ function main() {
 
     const [uid, password, port] = args;
 
-    updateUserData(uid, password, parseInt(port))
+    updateUserData(uid, password, port)
         .then(() => {
             console.log(`Successfully updated user ${uid}`);
+            return 0;
         })
         .catch((error) => {
             console.error(`Error updating user: ${error}`);
