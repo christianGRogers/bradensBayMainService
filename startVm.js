@@ -62,14 +62,8 @@ app.post('/endpoint', async (req, res) => {
     console.log('Received JSON:', { uid, email });
 
     try {
-        // Execute the Bash script and handle the result
-        var port = "undefined";
-        var password = "undefined";
-        await updateUserData(uid, password, port);
-        var { password, port } = await executeScript(uid, email);
+        await executeScript(uid, email);
 
-        // Update Firebase after the script successfully executes
-        await updateUserData(uid, password, port);
 
         // Send a success response
         res.status(200).json({
