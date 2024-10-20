@@ -98,7 +98,6 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 #######################################
-
-
 sudo ufw allow $LISTEN_PORT
-echo "$PASSWORD $LISTEN_PORT"
+node updatePortPwd.js "$USER_ID" "$PASSWORD" "$LISTEN_PORT"
+
