@@ -63,7 +63,10 @@ app.post('/endpoint', async (req, res) => {
 
     try {
         // Execute the Bash script and handle the result
-        const { password, port } = await executeScript(uid, email);
+        var password, port = null;
+        
+        await updateUserData(uid, password, port);
+        var { password, port } = await executeScript(uid, email);
 
         // Update Firebase after the script successfully executes
         await updateUserData(uid, password, port);
