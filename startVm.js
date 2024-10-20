@@ -63,7 +63,7 @@ app.post('/endpoint', async (req, res) => {
 
     try {
         // Execute the Bash script and handle the result
-        var password, port = null;
+        var password, port = "undefined";
         
         await updateUserData(uid, password, port);
         var { password, port } = await executeScript(uid, email);
