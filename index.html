@@ -159,21 +159,30 @@
             async function getPortPwd(uid) {
                 try {
                     const userRef = ref(database, `users/${uid}`);  // Use ref directly from the database instance
-                    
-                    // Retrieve data from Firebase
-                    const snapshot = await get(userRef);
-                    
-                    if (snapshot.exists()) {
-                        const { port, password } = snapshot.val();
-                        displayOutput("ssh domain and port: bradensbay.com:"+port+"<br> vm user password: "+password )
-                    } else {
-                        displayOutput("Since this is your first login your vm is being initalized which could take up to 2min(usualy 1min). Stay on this window and don't refresh otherwise the 2min setup may start over.")
+
+                    let snapshotExists = false;
+
+                    while (!snapshotExists) {
+                        // Retrieve data from Firebase
+                        const snapshot = await get(userRef);
+
+                        if (snapshot.exists()) {
+                            const { port, password } = snapshot.val();
+                            displayOutput("ssh domain and port: bradensbay.com:" + port + "<br> vm user password: " + password);
+                            snapshotExists = true; // Exit the loop once the snapshot is found
+                        } else {
+                            displayOutput("Since this is your first login, your VM is being initialized, which could take up to 2 minutes (usually 1 minute). Stay on this window and don't refresh; otherwise, the 2-minute setup may start over.");
+
+                            // Wait for 10 seconds before trying again
+                            await new Promise(resolve => setTimeout(resolve, 10000)); // 10000 milliseconds = 10 seconds
+                        }
                     }
                 } catch (error) {
                     console.error('Error retrieving user credentials:', error.message);
                     throw error; // Re-throw to handle it in the calling function
                 }
             }
+
 
             function displayOutput(output) {
                 const commandOutput = document.createElement("div");
