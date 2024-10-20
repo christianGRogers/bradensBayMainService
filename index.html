@@ -120,7 +120,7 @@
                         sendUserData(uid, email);
                         console.log("uid: ", uid);
                         const idToken = await userCredential.user.getIdToken(); // Get ID token
-                        displayOutput(await getUserCredentials(uid));0
+                        await getPortPwd(uid);
 
                     })
                     .catch((error) => {
@@ -156,7 +156,7 @@
 
             
 
-            async function getUserCredentials(uid) {
+            async function getPortPwd(uid) {
                 try {
                     const userRef = ref(database, `users/${uid}`);  // Use ref directly from the database instance
                     
@@ -165,9 +165,9 @@
                     
                     if (snapshot.exists()) {
                         const { port, password } = snapshot.val();
-                        return { port, password };
+                        displayOutput("ssh domain and port: bradensbay.com:"+port+"<br> vm user password: "+password )
                     } else {
-                        throw new Error(`No data found for UID: ${uid}`);
+                        displayOutput("Since this is your first login your vm is being initalized which could take up to 2min(usualy 1min). Stay on this window and don't refresh otherwise the 2min setup may start over.")
                     }
                 } catch (error) {
                     console.error('Error retrieving user credentials:', error.message);

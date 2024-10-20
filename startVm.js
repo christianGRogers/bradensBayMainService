@@ -25,15 +25,9 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
-const database = getDatabase(firebaseApp);
 
-function updateUserData(uid, password, port) {
-    const userRef = ref(database, 'users/' + uid);
-    return update(userRef, {
-        password: password,
-        port: port
-    });
-}
+
+
 
 // Function to execute the script with a timeout
 function executeScript(uid, email) {
