@@ -71,7 +71,42 @@
         let email = "";
         let password = "";
         let state = "awaitingEmail";
-        let vmName = false;  // Added to handle VM commands
+        let vmName = false;  
+        const totalDuration = 100; 
+        const totalBars = 30; 
+
+        // Function to render the loading bar in the text area
+        function renderLoadingBar(progress) {
+            const filledBars = Math.round((progress / totalDuration) * totalBars);
+            const emptyBars = totalBars - filledBars;
+            const bar = `[${'#'.repeat(filledBars)}${'-'.repeat(emptyBars)}]`;
+
+            // Update the last output line instead of creating a new one
+            const terminalBody = document.getElementById("terminal__body");
+            const lastOutput = terminalBody.querySelector(".loading-bar");
+
+            if (lastOutput) {
+                lastOutput.innerHTML = `<span>${bar}</span>`;
+            } else {
+                const loadingBarElement = document.createElement("div");
+                loadingBarElement.classList.add("terminal__output", "loading-bar");
+                loadingBarElement.innerHTML = `<span>${bar}</span>`;
+                terminalBody.insertBefore(loadingBarElement, document.getElementById("terminal__prompt"));
+            }
+        }
+
+        async function startLoading() {
+            let currentTime = 0;
+            const interval = setInterval(() => {
+                currentTime++;
+                renderLoadingBar(currentTime);
+
+                if (currentTime >= totalDuration) {
+                    clearInterval(interval);
+                    displayOutput("Loading complete!");
+                }
+            }, 1000); // Update every second
+        }
 
         document.addEventListener("DOMContentLoaded", () => {
             const inputField = document.getElementById("terminal__input");
@@ -107,6 +142,7 @@
                     
                 }
             }
+            
 
             function loginUser(email, password) {
                 signInWithEmailAndPassword(auth, email, password)
@@ -138,7 +174,7 @@
                 };
 
                 // Send a POST request to the server
-                fetch('http://10.0.0.11:3001/endpoint', {
+                fetch('http://bradensbay.com:3001/endpoint', {
                     method: 'POST', // Use POST request
                     headers: {
                         'Content-Type': 'application/json', // Send JSON data
@@ -161,18 +197,21 @@
                     const userRef = ref(database, `users/${uid}`);  // Use ref directly from the database instance
 
                     let snapshotExists = false;
-
+                    var checkOne = true;
                     while (!snapshotExists) {
                         // Retrieve data from Firebase
                         const snapshot = await get(userRef);
-
+                        
                         if (snapshot.exists()) {
                             const { port, password } = snapshot.val();
                             displayOutput("ssh domain and port: bradensbay.com:" + port + "<br> vm user password: " + password);
                             snapshotExists = true; // Exit the loop once the snapshot is found
                         } else {
-                            displayOutput("Since this is your first login, your VM is being initialized, which could take up to 2 minutes (usually 1 minute). Stay on this window and don't refresh; otherwise, the 2-minute setup may start over.");
-
+                            if(checkOne){
+                                displayOutput("Since this is your first login, your VM is being initialized, which could take up to 2 minutes (usually 1 minute). Stay on this window and don't refresh; otherwise, the 2-minute setup may start over.");
+                                startLoading();
+                                checkOne = false;
+                            }
                             // Wait for 10 seconds before trying again
                             await new Promise(resolve => setTimeout(resolve, 10000)); // 10000 milliseconds = 10 seconds
                         }
