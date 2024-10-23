@@ -2,7 +2,7 @@ const express = require('express');
 const { exec } = require('child_process');
 const bodyParser = require('body-parser');
 const app = express();
-const port = 3001;
+const port = 3002;
 
 app.use(bodyParser.json());
 
