@@ -1,5 +1,5 @@
 const express = require('express');
-const cors = require('cors'); // Import the CORS library
+const cors = require('cors'); 
 var exec = require('child_process').exec;
 const { initializeApp } = require('firebase/app');
 const { getDatabase, ref, set, update } = require('firebase/database');
