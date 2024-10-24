@@ -9,6 +9,8 @@ app.use(bodyParser.json());
 
 app.post('/addkey', (req, res) => {
     const { uid, key } = req.body;
+    console.log(uid);
+    console.log(key);
 
     if (!uid || !key) {
         return res.status(400).json({ error: 'USER_ID and PUBLIC_KEY are required.' });
