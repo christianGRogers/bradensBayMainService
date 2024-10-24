@@ -2,17 +2,17 @@ const express = require('express');
 const { exec } = require('child_process');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-app.use(cors());
+
 
 const app = express();
 const port = 3002;
-
+app.use(cors());
 app.use(bodyParser.json());
 
 app.post('/addkey', (req, res) => {
     const { uid, key } = req.body;
     console.log(uid);
-    console.log(key);
+    console.log(key);w
 
     if (!uid || !key) {
         return res.status(400).json({ error: 'USER_ID and PUBLIC_KEY are required.' });
