@@ -23,7 +23,7 @@ app.post('/addkey', (req, res) => {
         lxc exec $USER_ID -- bash -c "
             NON_ROOT_USER=\$(ls /home | head -n 1) && \
             mkdir -p /home/\$NON_ROOT_USER/.ssh && \
-            echo \"${sanitizedKey}\" >> /home/\$NON_ROOT_USER/.ssh/authorized_keys && \
+            echo \"${sanitizedKey}\" | cat > /home/\$NON_ROOT_USER/.ssh/authorized_keys && \
             chmod 600 /home/\$NON_ROOT_USER/.ssh/authorized_keys && \
             chmod 700 /home/\$NON_ROOT_USER/.ssh && \
             chown -R \$NON_ROOT_USER:\$NON_ROOT_USER /home/\$NON_ROOT_USER/.ssh"
