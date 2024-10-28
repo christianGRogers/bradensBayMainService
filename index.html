@@ -74,6 +74,7 @@
 
     // Function to render the loading bar in the text area
     function renderLoadingBar(progress) {
+        const apiSrc = '10.0.0.11';
         const filledBars = Math.round((progress / totalDuration) * totalBars);
         const emptyBars = totalBars - filledBars;
         const bar = `[${'#'.repeat(filledBars)}${'-'.repeat(emptyBars)}]`;
@@ -156,7 +157,7 @@
                 return;
             }
 
-            fetch('http://10.0.0.11:3002/addkey', {
+            fetch('http://'+apiSrc+ ':3002/addkey', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -204,7 +205,7 @@
                 email: email
             };
 
-            fetch('http://10.0.0.11:3001/endpoint', {
+            fetch('http://'+apiSrc+ ':3001/endpoint', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -248,7 +249,7 @@
             }
         }
         async function executeCommand(prompt) {
-            const apiUrl = 'http://10.0.0.11:3003/execute';
+            const apiUrl = 'http://'+apiSrc+ ':3003/execute';
 
             const requestBody = {
                 uid: uid,

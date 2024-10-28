@@ -1,8 +1,9 @@
 const express = require('express');
 const { exec } = require('child_process');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
-
+const cors = require('cors'); 
 const app = express();
+app.use(cors());
 const PORT = 3003;
 
 // Replace with your actual API key
