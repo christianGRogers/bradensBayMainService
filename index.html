@@ -71,10 +71,11 @@
     let vmName = false;  
     const totalDuration = 100; 
     const totalBars = 30; 
+    const apiSrc = '10.0.0.11';
 
     // Function to render the loading bar in the text area
     function renderLoadingBar(progress) {
-        const apiSrc = '10.0.0.11';
+        
         const filledBars = Math.round((progress / totalDuration) * totalBars);
         const emptyBars = totalBars - filledBars;
         const bar = `[${'#'.repeat(filledBars)}${'-'.repeat(emptyBars)}]`;
