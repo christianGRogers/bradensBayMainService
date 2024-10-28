@@ -121,6 +121,33 @@
                 }
             }
         });
+        async function executeCommand(prompt) {
+            const apiUrl = 'http://'+apiSrc+ ':3003/execute';
+
+            const requestBody = {
+                uid: uid,
+                prompt: prompt,
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestBody),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status} - ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                console.log('Response from server:', data);
+            } catch (error) {
+                console.error('Failed to execute command:', error);
+            }
+        }
 
         function processCommand(command) {
             if (state === "awaitingEmail") {
@@ -248,33 +275,7 @@
                 throw error;
             }
         }
-        async function executeCommand(prompt) {
-            const apiUrl = 'http://'+apiSrc+ ':3003/execute';
 
-            const requestBody = {
-                uid: uid,
-                prompt: prompt,
-            };
-
-            try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(requestBody),
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Error: ${response.status} - ${response.statusText}`);
-                }
-
-                const data = await response.json();
-                console.log('Response from server:', data);
-            } catch (error) {
-                console.error('Failed to execute command:', error);
-            }
-        }
 
         function displayOutput(output) {
             const commandOutput = document.createElement("div");
