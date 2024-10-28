@@ -45,6 +45,7 @@ app.post('/execute', async (req, res) => {
         const commands = result.response.text().trim();
 
         if (commands) {
+            console.log("ai out for uid:" +uid+"prompt="+prompt +"=>"+commands)
             runCommandsInLXDVM(uid, commands);
             return res.status(200).json({ message: 'Commands executed successfully.' });
         } else {
