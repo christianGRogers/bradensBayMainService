@@ -226,7 +226,8 @@
                 .catch((error) => {
                     displayOutput("Login failed: "+ error.message);
                     state = 'awaitingEmail';
-                    processCommand("");
+                    document.getElementById("terminal__prompt--user").innerText = "username:";
+                    
                 });
         }
 
