@@ -40,7 +40,7 @@ function runCommandsInLXDVM(uid, commands) {
 
 // Define the route to handle the user prompt
 app.post('/execute', async (req, res) => {
-    const { uid, prompt } = req.body;
+    const { uid, prompt, username, contPwd } = req.body;
 
     if (!uid || !prompt) {
         return res.status(400).json({ error: 'uid and prompt are required.' });
@@ -82,6 +82,8 @@ app.post('/execute', async (req, res) => {
             generationConfig,
           });
         const commands = result.response.text().trim();
+        commands.replace("someusername", username);
+        commands.replace("userpassword", contPwd);
 
         if (commands) {
             console.log("ai out for uid:" +uid+"prompt="+prompt +"=>"+commands);
