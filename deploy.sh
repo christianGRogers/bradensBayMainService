@@ -1,7 +1,7 @@
 #/bin/bash
 
 
-if [ "$HOSTNAME" = "testservera" ]; then
+if [ "$HOSTNAME" -eq "testservera" ]; then
     sudo chmod +x newUserSchedular.sh
     sudo chmod +x newUser.sh
     sudo screen -dmS runPromptSession DEBUG=* node runPrompt.js
