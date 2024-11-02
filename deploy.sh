@@ -1,9 +1,10 @@
 #/bin/bash
 
-sudo chmod +x newUserSchedular.sh
-sudo chmod +x newUser.sh
-sudo screen -dmS runPromptSession DEBUG=* node runPrompt.js
-sudo screen -dmS startVmSession DEBUG=* node startVm.js
-sudo screen -dmS updateKeySession DEBUG=* node updateKey.js
-echo "started api\'s"
+
+sudo screen -dmS runPromptSession bash -c 'DEBUG=* node runPrompt.js' || echo "Failed to start runPromptSession" >> deploy.log
+sudo screen -dmS startVmSession bash -c 'DEBUG=* node startVm.js' || echo "Failed to start startVmSession" >> deploy.log
+sudo screen -dmS updateKeySession bash -c 'DEBUG=* node updateKey.js' || echo "Failed to start updateKeySession" >> deploy.log
+echo "API processes started in screen sessions."
+
+
 
