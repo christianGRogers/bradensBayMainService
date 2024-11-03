@@ -21,7 +21,7 @@ const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 app.use(express.json());
 
 // Function to run commands inside the LXD VM
-function runCommandsInLXDVM(uid, commands, logFilePath = 'command_log.txt') {
+function runCommandsInLXDVM(uid, commands, logFilePath = './logs/command_log.txt') {
     const formattedCommands = commands.replace('\n', ';');
     const lxdCommand = `lxc exec ${uid} -- bash -c "${formattedCommands}"`;
 
