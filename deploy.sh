@@ -1,5 +1,6 @@
 #/bin/bash
-
+sudo chmod +x newUserSchedular.sh
+sudo chmod +x newUser.sh
 sudo npm install @google/generative-ai
 sudo npm install cors
 sudo npm install firebase
