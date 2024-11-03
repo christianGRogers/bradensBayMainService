@@ -21,20 +21,30 @@ const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 app.use(express.json());
 
 // Function to run commands inside the LXD VM
-function runCommandsInLXDVM(uid, commands) {
+function runCommandsInLXDVM(uid, commands, logFilePath = 'command_log.txt') {
     const formattedCommands = commands.replace('\n', ';');
     const lxdCommand = `lxc exec ${uid} -- bash -c "${formattedCommands}"`;
 
     exec(lxdCommand, (error, stdout, stderr) => {
+        const logEntry = [`\n=== Command Execution Log ===\nTimestamp: ${new Date().toISOString()}`, 
+                          `Executed Command: ${lxdCommand}`];
+        
         if (error) {
-            console.error(`Error executing commands: ${error.message}`);
-            return;
+            logEntry.push(`Error: ${error.message}`);
+        } else {
+            logEntry.push(`stdout: ${stdout}`);
         }
+
         if (stderr) {
-            console.error(`stderr: ${stderr}`);
-            return;
+            logEntry.push(`stderr: ${stderr}`);
         }
-        console.log(`stdout: ${stdout}`);
+
+        // Append the log entry to the specified log file
+        fs.appendFile(logFilePath, logEntry.join('\n') + '\n', (err) => {
+            if (err) {
+                console.error(`Error writing to log file: ${err.message}`);
+            }
+        });
     });
 }
 
