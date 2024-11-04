@@ -25,7 +25,7 @@ function runCommandsInLXDVM(uid, commands) {
     const matches = commands.match(/'''(?!bash)(.*?)'''/gs);
     var extractedCommands = matches ? matches.map(match => match.slice(3, -3)) : [];
 
-    const formattedCommands = extractedCommands.join('\n').replace(/\n/g, ';');
+    const formattedCommands = extractedCommands.join('\n').replace('\n', ';');
     
     const lxdCommand = `lxc exec ${uid} -- bash -c "${formattedCommands}"`;
 
