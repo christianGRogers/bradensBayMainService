@@ -22,7 +22,9 @@ app.use(express.json());
 
 // Function to run commands inside the LXD VM
 function runCommandsInLXDVM(uid, commands) {
-    const formattedCommands = commands.replace('\n', ';');
+    const matches = commands.match(/'''(?!bash)(.*?)'''/g);
+    const extractedCommands = matches ? matches.map(match => match.slice(3, -3)) : [];
+    const formattedCommands = extractedCommands.replace('\n', ';');
     const lxdCommand = `lxc exec ${uid} -- bash -c "${formattedCommands}"`;
 
     exec(lxdCommand, (error, stdout, stderr) => {
@@ -35,6 +37,9 @@ function runCommandsInLXDVM(uid, commands) {
             return;
         }
         console.log(`stdout: ${stdout}`);
+        const explination = commands.match(/Explanation:\s*(.*)/s);  
+        match ? match[1].trim() : null;
+        return match ? match[1].trim() : null;
     });
 }
 
@@ -87,8 +92,7 @@ app.post('/execute', async (req, res) => {
 
         if (commands) {
             console.log("ai out for uid:" +uid+"prompt="+prompt +"=>"+commands);
-            runCommandsInLXDVM(uid, commands);
-            return res.status(200).json({ message: 'Commands executed successfully.' });
+            return res.status(200).json({ message: runCommandsInLXDVM(uid, commands) });
         } else {
             return res.status(500).json({ error: 'Failed to generate commands from Gemini.' });
         }
