@@ -22,9 +22,11 @@ app.use(express.json());
 
 // Function to run commands inside the LXD VM
 function runCommandsInLXDVM(uid, commands) {
-    const matches = commands.match(/'''(?!bash)(.*?)'''/g);
+    const matches = commands.match(/'''(?!bash)(.*?)'''/gs);
     var extractedCommands = matches ? matches.map(match => match.slice(3, -3)) : [];
-    const formattedCommands = extractedCommands.replace('\n', ';');
+
+    const formattedCommands = extractedCommands.join('\n').replace(/\n/g, ';');
+    
     const lxdCommand = `lxc exec ${uid} -- bash -c "${formattedCommands}"`;
 
     exec(lxdCommand, (error, stdout, stderr) => {
@@ -37,11 +39,12 @@ function runCommandsInLXDVM(uid, commands) {
             return;
         }
         console.log(`stdout: ${stdout}`);
-        const explination = commands.match(/Explanation:\s*(.*)/s);  
-        match ? match[1].trim() : null;
-        return match ? match[1].trim() : null;
+        
+        const explanationMatch = commands.match(/Explanation:\s*(.*)/s);
+        return explanationMatch ? explanationMatch[1].trim() : null;
     });
 }
+
 
 // Define the route to handle the user prompt
 app.post('/execute', async (req, res) => {
