@@ -23,7 +23,7 @@ app.use(express.json());
 // Function to run commands inside the LXD VM
 function runCommandsInLXDVM(uid, commands) {
     const matches = commands.match(/'''(?!bash)(.*?)'''/g);
-    const extractedCommands = matches ? matches.map(match => match.slice(3, -3)) : [];
+    var extractedCommands = matches ? matches.map(match => match.slice(3, -3)) : [];
     const formattedCommands = extractedCommands.replace('\n', ';');
     const lxdCommand = `lxc exec ${uid} -- bash -c "${formattedCommands}"`;
 
