@@ -100,8 +100,8 @@ app.post('/execute', async (req, res) => {
             generationConfig,
           });
         const commands = result.response.text().trim();
-        commands.replace("someusername", username);
-        commands.replace("userpassword", contPwd);
+        commands = commands.replace("someusername", username);
+        commands = commands.replace("userpassword", contPwd);
 
         if (commands) {
             console.log("ai out for uid:" +uid+"prompt="+prompt +"=>"+commands);
