@@ -99,7 +99,7 @@ app.post('/execute', async (req, res) => {
             contents: [{ role: "user", parts }],
             generationConfig,
           });
-        const commands = result.response.text().trim();
+        var commands = result.response.text().trim();
         commands = commands.replace("someusername", username);
         commands = commands.replace("userpassword", contPwd);
 
