@@ -28,6 +28,7 @@ function runCommandsInLXDVM(uid, commands) {
     const formattedCommands = extractedCommands.join('\n').replace('\n', ';');
     
     const lxdCommand = `lxc exec ${uid} -- bash -c "${formattedCommands}"`;
+    console.log(lxdCommand);
 
     exec(lxdCommand, (error, stdout, stderr) => {
         if (error) {
