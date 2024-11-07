@@ -22,21 +22,24 @@ app.use(express.json());
 
 
 function runCommandsInLXDVM(uid, commands) {
-    console.log(commands);
-    const matches = commands.match(/'''(?!bash)(.*?)'''/gs);
-    
-    // Check if there are any extracted command blocks
-    if (!matches || matches.length === 0) {
+    // Adjust regex to handle an optional newline after opening triple quotes
+    const matches = commands.match(/'''(?:\r?\n)?([\s\S]*?)'''/g);
+
+    // Filter out any blocks that contain "bash" immediately after the first triple quote
+    const extractedCommands = matches
+        ? matches
+            .filter(match => !/^'''(?:\r?\n)?bash/.test(match)) // Exclude blocks that start with "bash"
+            .map(match => match.replace(/^'''(?:\r?\n)?/, '').replace(/'''$/, '').trim()) // Remove triple quotes and trim
+        : [];
+
+    if (extractedCommands.length === 0) {
         console.warn("No valid command blocks found within triple quotes.");
         return;
     }
 
-    // Trim and preserve multi-line structure of each command block
-    const extractedCommands = matches.map(match => match.slice(3, -3).trim());
-    
-    // Join commands without replacing newline within multi-line blocks
+    // Join commands with '&&' to keep multi-line structure intact
     const formattedCommands = extractedCommands.join(' && ');
-    
+
     // Construct the lxc command
     const lxdCommand = `lxc exec ${uid} -- bash -c "${formattedCommands}"`;
     console.log("Executing LXD Command:", lxdCommand);
