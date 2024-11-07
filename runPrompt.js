@@ -24,7 +24,7 @@ app.use(express.json());
 
 function runCommandsInLXDVM(uid, commands) {
     // Split commands and explanation by "Explanation:"
-    let [rawCommandText, explanationText] = commands.split(/**Explanation:**/s);
+    let [rawCommandText, explanationText] = commands.split(/\*\*Explanation:\*\*/s);
 
     // Remove the first 7 characters ('''bash) and the last three characters (''') before "Explanation:"
     const commandText = rawCommandText.slice(7).replace(/'''\s*$/, '').trim();
