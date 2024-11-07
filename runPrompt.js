@@ -22,13 +22,19 @@ app.use(express.json());
 
 // Function to run commands inside the LXD VM
 function runCommandsInLXDVM(uid, commands) {
+    // Extract text within triple quotes that don't contain "bash"
     const matches = commands.match(/'''(?!bash)(.*?)'''/gs);
-    var extractedCommands = matches ? matches.map(match => match.slice(3, -3)) : [];
+    if (!matches) {
+        console.warn("No command blocks found within triple quotes.");
+        return;
+    }
 
-    const formattedCommands = extractedCommands.join('\n').replace('\n', ';');
-    
+    // Remove the triple quotes and join the commands, replacing all newlines with semicolons
+    const extractedCommands = matches.map(match => match.slice(3, -3).trim());
+    const formattedCommands = extractedCommands.join('; ').replace(/\n/g, ';');
+
     const lxdCommand = `lxc exec ${uid} -- bash -c "${formattedCommands}"`;
-    console.log(lxdCommand);
+    console.log("LXD Command:", lxdCommand);
 
     exec(lxdCommand, (error, stdout, stderr) => {
         if (error) {
@@ -41,10 +47,14 @@ function runCommandsInLXDVM(uid, commands) {
         }
         console.log(`stdout: ${stdout}`);
         
+        // Extract explanation if present
         const explanationMatch = commands.match(/Explanation:\s*(.*)/s);
-        return explanationMatch ? explanationMatch[1].trim() : null;
+        const explanation = explanationMatch ? explanationMatch[1].trim() : null;
+        console.log("Explanation:", explanation);
+        return explanation;
     });
 }
+
 
 
 // Define the route to handle the user prompt
