@@ -27,7 +27,12 @@ function runCommandsInLXDVM(uid, commands) {
     let [rawCommandText, explanationText] = commands.split(/\*\*Explanation:\*\*/s);
 
     // Remove the first 7 characters ('''bash) and the last three characters (''') before "Explanation:"
-    const commandText = rawCommandText.slice(7).replace(/'''\s*$/, '').trim();
+    console.log(rawCommandText);
+
+    // Remove the first 7 characters and then any trailing or encapsulated `'''`
+    const commandText = cm.slice(7)
+        .replace(/'''(\s|$)/g, '')  // Replace any standalone ''' followed by whitespace or end of string
+        .trim();
 
     // Create the LXD command string
     const lxdCommand = `lxc exec ${uid} -- bash -c "${commandText}"`;
