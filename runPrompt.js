@@ -23,20 +23,20 @@ app.use(express.json());
 
 
 function runCommandsInLXDVM(uid, commands) {
-    // Split commands and explanation by "Explanation:"
     let [rawCommandText, explanationText] = commands.split(/\*\*Explanation:\*\*/s);
 
-    // Remove the first 7 characters ('''bash) and the last three characters (''') before "Explanation:"
     console.log(rawCommandText);
 
-    // Remove the first 7 characters and then any trailing or encapsulated `'''`
-    const commandText = rawCommandText.slice(7).slice(0, -6).trim();
+    const commandText = rawCommandText
+    .slice(7)                          // Remove the first 7 characters (e.g., '''bash)
+    .slice(0, -6)                      // Remove the last 6 characters (e.g., ending ''')
+    .trim()                            // Trim any leading/trailing whitespace
+    .replace(/<<\s+EOF/g, '<< "EOF"'); // Replace '<< EOF' with '<< "EOF"'
 
-    // Create the LXD command string
-    const lxdCommand = `lxc exec ${uid} -- bash -c "${commandText}"`;
+
+    const lxdCommand = `lxc exec ${uid} -- bash -c "set +H\n${commandText}"`;
     console.log("LXD Command:", lxdCommand);
 
-    // Execute the command in the LXD container
     exec(lxdCommand, (error, stdout, stderr) => {
         if (error) {
             console.error(`Error executing commands: ${error.message}`);
@@ -48,7 +48,6 @@ function runCommandsInLXDVM(uid, commands) {
         }
         console.log(`stdout: ${stdout}`);
 
-        // Extract and print the explanation if present
         const explanation = explanationText ? explanationText.trim() : null;
         console.log("Explanation:", explanation);
         return explanation;
