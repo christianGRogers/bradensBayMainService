@@ -39,10 +39,12 @@ function runCommandsInLXDVM(uid, commands) {
     const explanation = explanationText ? explanationText.trim() : null;
     exec(lxdCommand, (error, stdout, stderr) => {
         if (error) {
+            console.log("Explanation:", explanation);
             console.error(`Error executing commands: ${error.message}`);
             return explanation;
         }
         if (stderr) {
+            console.log("Explanation:", explanation);
             console.error(`stderr: ${stderr}`);
             return explanation;
         }
