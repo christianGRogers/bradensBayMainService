@@ -30,9 +30,7 @@ function runCommandsInLXDVM(uid, commands) {
     console.log(rawCommandText);
 
     // Remove the first 7 characters and then any trailing or encapsulated `'''`
-    const commandText = cm.slice(7)
-        .replace(/'''(\s|$)/g, '')  // Replace any standalone ''' followed by whitespace or end of string
-        .trim();
+    const commandText = rawCommandText.slice(7).slice(0, -6).trim();
 
     // Create the LXD command string
     const lxdCommand = `lxc exec ${uid} -- bash -c "${commandText}"`;
