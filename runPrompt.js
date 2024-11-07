@@ -23,7 +23,7 @@ app.use(express.json());
 // Function to run commands inside the LXD VM
 function runCommandsInLXDVM(uid, commands) {
     // Extract text within triple quotes that don't contain "bash"
-    const matches = commands.match(/'''(?!bash)(.*?)'''/gs);
+    const matches = commands.match(/```(?!bash)(.*?)```/gs);
     if (!matches) {
         console.warn("No command blocks found within triple quotes.");
         return;
