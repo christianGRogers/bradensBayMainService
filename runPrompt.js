@@ -21,21 +21,29 @@ const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 app.use(express.json());
 
 // Function to run commands inside the LXD VM
+const { exec } = require('child_process');
+
 function runCommandsInLXDVM(uid, commands) {
-    // Extract text within triple quotes that don't contain "bash"
-    const matches = commands.match(/```(?!bash)(.*?)```/gs);
-    if (!matches) {
-        console.warn("No command blocks found within triple quotes.");
+    // Match blocks within triple quotes, excluding "bash" after triple quotes
+    const matches = commands.match(/'''(?!bash)(.*?)'''/gs);
+    
+    // Check if there are any extracted command blocks
+    if (!matches || matches.length === 0) {
+        console.warn("No valid command blocks found within triple quotes.");
         return;
     }
 
-    // Remove the triple quotes and join the commands, replacing all newlines with semicolons
+    // Trim and preserve multi-line structure of each command block
     const extractedCommands = matches.map(match => match.slice(3, -3).trim());
-    const formattedCommands = extractedCommands.join('; ').replace(/\n/g, ';');
-
+    
+    // Join commands without replacing newline within multi-line blocks
+    const formattedCommands = extractedCommands.join(' && ');
+    
+    // Construct the lxc command
     const lxdCommand = `lxc exec ${uid} -- bash -c "${formattedCommands}"`;
-    console.log("LXD Command:", lxdCommand);
+    console.log("Executing LXD Command:", lxdCommand);
 
+    // Execute the command
     exec(lxdCommand, (error, stdout, stderr) => {
         if (error) {
             console.error(`Error executing commands: ${error.message}`);
@@ -47,7 +55,7 @@ function runCommandsInLXDVM(uid, commands) {
         }
         console.log(`stdout: ${stdout}`);
         
-        // Extract explanation if present
+        // Optionally match any "Explanation" section after commands
         const explanationMatch = commands.match(/Explanation:\s*(.*)/s);
         const explanation = explanationMatch ? explanationMatch[1].trim() : null;
         console.log("Explanation:", explanation);
