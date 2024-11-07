@@ -20,10 +20,7 @@ const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
 app.use(express.json());
 
-// Function to run commands inside the LXD VM
-const exec = require('child_process').exec;
 
-const { exec } = require('child_process');
 
 function runCommandsInLXDVM(uid, commands) {
     // Split commands and explanation by "Explanation:"
