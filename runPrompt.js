@@ -25,10 +25,14 @@ function runCommandsInLXDVM(uid, commands) {
     // Split the commands and explanation by the keyword "Explanation:"
     const [commandText, explanationText] = commands.split(/Explanation:/s);
 
-    // Format commands by replacing all newlines with semicolons
-    const formattedCommands = commandText.trim().replace(/\n/g, ';');
+    // Format commands by trimming and replacing single newlines with semicolons.
+    // Preserve multiline EOF blocks by matching `<< EOF` patterns.
+    const formattedCommands = commandText
+        .trim()
+        .replace(/(?!<<\s*EOF)\n/g, ';') // Preserve `<< EOF` multiline syntax
+        .replace(/;{2,}/g, ';');          // Prevent double semicolons
 
-    // Prepare the LXD command to execute the formatted commands
+    // Create the LXD command string
     const lxdCommand = `lxc exec ${uid} -- bash -c "${formattedCommands}"`;
     console.log("LXD Command:", lxdCommand);
 
@@ -44,12 +48,13 @@ function runCommandsInLXDVM(uid, commands) {
         }
         console.log(`stdout: ${stdout}`);
 
-        // Print and return the explanation if available
+        // Extract and print the explanation if present
         const explanation = explanationText ? explanationText.trim() : null;
         console.log("Explanation:", explanation);
         return explanation;
     });
 }
+
 
 
 
