@@ -21,16 +21,21 @@ const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 app.use(express.json());
 
 // Function to run commands inside the LXD VM
+const exec = require('child_process').exec;
+
 function runCommandsInLXDVM(uid, commands) {
     // Split the commands and explanation by the keyword "Explanation:"
     const [commandText, explanationText] = commands.split(/Explanation:/s);
 
-    // Format commands by trimming and replacing single newlines with semicolons.
-    // Preserve multiline EOF blocks by matching `<< EOF` patterns.
+    // Format commands:
+    // - Preserve multi-line `<< EOF` blocks.
+    // - Replace newlines with semicolons except for `<< EOF` blocks.
     const formattedCommands = commandText
         .trim()
-        .replace(/(?!<<\s*EOF)\n/g, ';') // Preserve `<< EOF` multiline syntax
-        .replace(/;{2,}/g, ';');          // Prevent double semicolons
+        // Match everything except for `<< EOF` blocks and replace newlines with semicolons
+        .replace(/(^|\n)(?!\s*<<\s*EOF)[^\n]+/g, (match, p1) => p1 + match.trim().replace(/\n/g, ';'))
+        .replace(/;{2,}/g, ';')               // Replace multiple semicolons with a single semicolon
+        .replace(/'''/g, ' ');                // Replace triple single quotes with a space
 
     // Create the LXD command string
     const lxdCommand = `lxc exec ${uid} -- bash -c "${formattedCommands}"`;
@@ -54,6 +59,7 @@ function runCommandsInLXDVM(uid, commands) {
         return explanation;
     });
 }
+
 
 
 
