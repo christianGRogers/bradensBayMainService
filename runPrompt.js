@@ -23,22 +23,17 @@ app.use(express.json());
 // Function to run commands inside the LXD VM
 const exec = require('child_process').exec;
 
-function runCommandsInLXDVM(uid, commands) {
-    // Split the commands and explanation by the keyword "Explanation:"
-    const [commandText, explanationText] = commands.split(/Explanation:/s);
+const { exec } = require('child_process');
 
-    // Format commands:
-    // - Preserve multi-line `<< EOF` blocks.
-    // - Replace newlines with semicolons except for `<< EOF` blocks.
-    const formattedCommands = commandText
-        .trim()
-        // Match everything except for `<< EOF` blocks and replace newlines with semicolons
-        .replace(/(^|\n)(?!\s*<<\s*EOF)[^\n]+/g, (match, p1) => p1 + match.trim().replace(/\n/g, ';'))
-        .replace(/;{2,}/g, ';')               // Replace multiple semicolons with a single semicolon
-        .replace(/'''/g, ' ');                // Replace triple single quotes with a space
+function runCommandsInLXDVM(uid, commands) {
+    // Split commands and explanation by "Explanation:"
+    let [rawCommandText, explanationText] = commands.split(/**Explanation:**/s);
+
+    // Remove the first 7 characters ('''bash) and the last three characters (''') before "Explanation:"
+    const commandText = rawCommandText.slice(7).replace(/'''\s*$/, '').trim();
 
     // Create the LXD command string
-    const lxdCommand = `lxc exec ${uid} -- bash -c "${formattedCommands}"`;
+    const lxdCommand = `lxc exec ${uid} -- bash -c "${commandText}"`;
     console.log("LXD Command:", lxdCommand);
 
     // Execute the command in the LXD container
@@ -59,6 +54,7 @@ function runCommandsInLXDVM(uid, commands) {
         return explanation;
     });
 }
+
 
 
 
