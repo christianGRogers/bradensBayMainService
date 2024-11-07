@@ -36,7 +36,7 @@ function runCommandsInLXDVM(uid, commands) {
 
     const lxdCommand = `lxc exec ${uid} -- bash -c "set +H\n${commandText}"`;
     console.log("LXD Command:", lxdCommand);
-
+    const explanation = explanationText ? explanationText.trim() : null;
     exec(lxdCommand, (error, stdout, stderr) => {
         if (error) {
             console.error(`Error executing commands: ${error.message}`);
@@ -48,7 +48,7 @@ function runCommandsInLXDVM(uid, commands) {
         }
         console.log(`stdout: ${stdout}`);
 
-        const explanation = explanationText ? explanationText.trim() : null;
+        
         console.log("Explanation:", explanation);
         return explanation;
     });
