@@ -146,7 +146,7 @@
                 }
 
                 const data = await response.json();
-                console.log('Response from server:', data.innerText());
+                console.log('Response from server:', data.message);
                 displayOutput(data);
             } catch (error) {
                 console.error('Failed to execute command:', error);
