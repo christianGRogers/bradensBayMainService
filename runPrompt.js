@@ -40,11 +40,11 @@ function runCommandsInLXDVM(uid, commands) {
     exec(lxdCommand, (error, stdout, stderr) => {
         if (error) {
             console.error(`Error executing commands: ${error.message}`);
-            return;
+            return explanation;
         }
         if (stderr) {
             console.error(`stderr: ${stderr}`);
-            return;
+            return explanation;
         }
         console.log(`stdout: ${stdout}`);
 
