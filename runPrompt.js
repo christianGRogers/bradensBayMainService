@@ -20,11 +20,9 @@ const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
 app.use(express.json());
 
-// Function to run commands inside the LXD VM
-const { exec } = require('child_process');
 
 function runCommandsInLXDVM(uid, commands) {
-    // Match blocks within triple quotes, excluding "bash" after triple quotes
+    console.log(commands);
     const matches = commands.match(/'''(?!bash)(.*?)'''/gs);
     
     // Check if there are any extracted command blocks
@@ -123,7 +121,7 @@ app.post('/execute', async (req, res) => {
         commands = commands.replace(/userpassword/g, contPwd);
 
         if (commands) {
-            console.log("ai out for uid:" +uid+"prompt="+prompt +"=>"+commands);
+
             return res.status(200).json({ message: runCommandsInLXDVM(uid, commands) });
         } else {
             return res.status(500).json({ error: 'Failed to generate commands from Gemini.' });
