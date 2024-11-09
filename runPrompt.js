@@ -73,7 +73,7 @@ async function chat(input) {
     });
   
     const result = await chatSession.sendMessage(input);
-    return result.response.text;
+    return result;
 }
 
 
@@ -89,9 +89,11 @@ app.post('/execute', async (req, res) => {
     if (!uid || !prompt) {
         return res.status(400).json({ error: 'uid and prompt are required.' });
     }
+
     try {
         
-        var commands = await chat(prompt);
+        const result = await chat(prompt);
+        var commands = result.response.text().trim();
         commands = commands.replace(/someusername/g, username);
         commands = commands.replace(/userpassword/g, contPwd);
 
