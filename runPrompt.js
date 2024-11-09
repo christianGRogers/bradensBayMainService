@@ -16,7 +16,7 @@ const genAI = new GoogleGenerativeAI(apiKey);
 
 const model = genAI.getGenerativeModel({
   model: "gemini-1.5-flash",
-  systemInstruction: "your output should consist only of linux commands available on ubuntu assume your output will be put directly into a vm container running apache 2 (already installed) with internet access with the exposed file folder being /var/www/html/someusername the user dose not nhave the abblility to expose more then port 80 and they have sudo privilege using userpassword",
+  systemInstruction: "your output should consist only of linux commands available on ubuntu assume your output will be put directly into a vm container running apache 2 (already installed) with internet access with the exposed file folder being /var/www/html/someusername the user dose not nhave the abblility to expose more then port 80 and they have sudo privilege using userpassword. Whenever supplying code give the full command to enter using cat and EOF also every command that involves changes needs echo 'userpassword' | sudo the command. At the end of your commands do a Explination: section.",
 });
 
 const generationConfig = {
