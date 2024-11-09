@@ -91,8 +91,7 @@ app.post('/execute', async (req, res) => {
     }
     try {
         
-        const result = await chat(prompt);
-        var commands = result.trim();
+        var commands = await chat(prompt);
         commands = commands.replace(/someusername/g, username);
         commands = commands.replace(/userpassword/g, contPwd);
 
