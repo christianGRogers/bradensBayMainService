@@ -37,8 +37,8 @@ function runCommandsInLXDVM(uid, commands) {
     console.log(rawCommandText);
 
     const commandText = rawCommandText
-    // .slice(7)                          // Remove the first 7 characters (e.g., '''bash)
-    // .slice(0, -6)                      // Remove the last 6 characters (e.g., ending ''')
+    .slice(7)                          // Remove the first 7 characters (e.g., '''bash)
+    .slice(0, -6)                      // Remove the last 6 characters (e.g., ending ''')
     .trim()                            // Trim any leading/trailing whitespace
     .replace(/<<\s+EOF/g, '<< "EOF"'); // Replace '<< EOF' with '<< "EOF"'
 
