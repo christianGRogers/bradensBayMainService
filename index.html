@@ -69,41 +69,50 @@
     let contPwd = "";
     let state = "awaitingEmail";
     let vmName = false;  
-    var totalDuration = 100; 
+
     const totalBars = 30; 
     const apiSrc = '10.0.0.11';
 
-    // Function to render the loading bar in the text area
-    function renderLoadingBar(progress) {
-        
-        const filledBars = Math.round((progress / totalDuration) * totalBars);
+
+    function renderLoadingBar(progress, duration) {
+        const totalBars = 30;
+        const filledBars = Math.round((progress / duration) * totalBars);
         const emptyBars = totalBars - filledBars;
         const bar = `[${'#'.repeat(filledBars)}${'-'.repeat(emptyBars)}]`;
 
         const terminalBody = document.getElementById("terminal__body");
-        const lastOutput = terminalBody.querySelector(".loading-bar");
+        let loadingBarElement = terminalBody.querySelector(".loading-bar");
 
-        if (lastOutput) {
-            lastOutput.innerHTML = `<span>${bar}</span>`;
-        } else {
-            const loadingBarElement = document.createElement("div");
+        // Create the loading bar element if it doesn't exist
+        if (!loadingBarElement) {
+            loadingBarElement = document.createElement("div");
             loadingBarElement.classList.add("terminal__output", "loading-bar");
-            loadingBarElement.innerHTML = `<span>${bar}</span>`;
             terminalBody.insertBefore(loadingBarElement, document.getElementById("terminal__prompt"));
+        }
+
+        loadingBarElement.innerHTML = `<span>${bar}</span>`;
+
+        // Remove the loading bar after the progress reaches the duration
+        if (progress >= duration) {
+            setTimeout(() => {
+                loadingBarElement.remove();
+            }, 500); // Optional delay for visual smoothness
         }
     }
 
-    async function startLoading() {
+    // Starts the loading process with a specified countdown duration.
+    async function startLoading(duration) {
         let currentTime = 0;
         const interval = setInterval(() => {
             currentTime++;
-            renderLoadingBar(currentTime);
+            renderLoadingBar(currentTime, duration);
 
-            if (currentTime >= totalDuration) {
+            if (currentTime >= duration) {
                 clearInterval(interval);
             }
         }, 1000);
     }
+
 
     document.addEventListener("DOMContentLoaded", () => {
         const inputField = document.getElementById("terminal__input");
@@ -168,8 +177,7 @@
                 if (command === "addkey") {
                     promptForKey();
                 } else {
-                    totalDuration = 15;
-                    startLoading();
+                    startLoading(20);
                     executeCommand(command);
                     displayOutput("<a href='http://bradensbay.com:81/"+email.split('@')[0]+"''>view site</a>");
                 }
@@ -275,7 +283,7 @@
                     } else {
                         if (checkOne) {
                             displayOutput("Since this is your first login, your VM is being initialized, which could take up to 2 minutes. Stay on this window and don't refresh.");
-                            startLoading();
+                            startLoading(100);
                             checkOne = false;
                         }
                         await new Promise(resolve => setTimeout(resolve, 10000));
