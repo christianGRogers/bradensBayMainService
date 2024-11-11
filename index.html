@@ -81,6 +81,7 @@
         const bar = `[${'#'.repeat(filledBars)}${'-'.repeat(emptyBars)}]`;
 
         const terminalBody = document.getElementById("terminal__body");
+        let loadingBarElement;
 
         loadingBarElement = document.createElement("div");
         loadingBarElement.classList.add("terminal__output", "loading-bar");
