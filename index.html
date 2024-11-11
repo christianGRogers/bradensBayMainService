@@ -176,8 +176,9 @@
                 if (command === "addkey") {
                     promptForKey();
                 } else {
-                    startLoading(20);
+                    
                     executeCommand(command);
+                    startLoading(20);
                     displayOutput("<a href='http://bradensbay.com:81/"+email.split('@')[0]+"''>view site</a>");
                 }
                 displayOutput(command);
