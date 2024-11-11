@@ -139,8 +139,9 @@ button:hover {
   padding-top: 60px; /* Adjust padding for fixed logo */
   margin-top: -1px;
   color: white;
-  overflow-y: auto; /* Make terminal body scrollable */
   position: relative;
+  max-height: 400px; /* Adjust the height as needed */
+  overflow-y: auto;
 }
 
 /* Logo and signup fixed at top */

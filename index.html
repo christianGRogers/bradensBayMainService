@@ -124,10 +124,7 @@
                 const command = inputField.value.trim();
                 processCommand(command);
                 inputField.value = "";
-                if (count >= 15) {
-                    processCommand("clear");
-                    count = 0;
-                }
+
             }
         });
         async function executeCommand(prompt) {
