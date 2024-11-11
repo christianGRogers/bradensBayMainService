@@ -19,7 +19,7 @@
                 </div>
                 <p id="bar__user">user@bradensbay.com ~</p>
             </section>
-            <!-- Terminal Body -->
+            <!-- Terminal Body -->      
             <section id="terminal__body">
                 <div id="logosignup">
                     <img src="logo.png" alt="logo" style="width:200px; height:50px;">
@@ -80,11 +80,12 @@
         const bar = `[${'#'.repeat(filledBars)}${'-'.repeat(emptyBars)}]`;
 
         const terminalBody = document.getElementById("terminal__body");
-        let loadingBarElement;
-
-        loadingBarElement = document.createElement("div");
-        loadingBarElement.classList.add("terminal__output", "loading-bar");
-        terminalBody.insertBefore(loadingBarElement, document.getElementById("terminal__prompt"));
+        let loadingBarElement = document.getElementById("loading-bar");
+        if(passOne){
+            loadingBarElement = document.createElement("div");
+            loadingBarElement.classList.add("terminal__output", "loading-bar");
+            terminalBody.insertBefore(loadingBarElement, document.getElementById("terminal__prompt"));
+        }
 
 
         loadingBarElement.innerHTML = `<span>${bar}</span>`;
@@ -100,10 +101,11 @@
     // Starts the loading process with a specified countdown duration.
     async function startLoading(duration) {
         let currentTime = 0;
+        var passOne =true;
         const interval = setInterval(() => {
             currentTime++;
-            renderLoadingBar(currentTime, duration);
-
+            renderLoadingBar(currentTime, duration, passOne);
+            passOne = false;
             if (currentTime >= duration) {
                 clearInterval(interval);
             }
