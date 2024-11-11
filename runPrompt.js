@@ -43,7 +43,7 @@ function runCommandsInLXDVM(uid, commands) {
     .replace(/<<\s+EOF/g, '<< "EOF"'); // Replace '<< EOF' with '<< "EOF"'
 
 
-    const lxdCommand = `lxc exec ${uid} -- bash -c "set +H\n${commandText}"`;
+    const lxdCommand = `lxc exec ${uid} -- bash -c 'set +H\n${commandText}'`;
     console.log("LXD Command:", lxdCommand);
     const explanation = explanationText ? explanationText.trim() : null;
     exec(lxdCommand, (error, stdout, stderr) => {
