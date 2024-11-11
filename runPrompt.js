@@ -44,11 +44,11 @@ function runCommandsInLXDVM(uid, commands) {
         exec(lxdCommand, (error, stdout, stderr) => {
             if (error) {
                 console.error(`Error executing commands: ${error.message}`);
-                return reject(`Execution Error: ${explanation}`);
+                resolve(explanation);
             }
             if (stderr) {
                 console.error(`stderr: ${stderr}`);
-                return reject(`stderr: ${explanation}`);
+                resolve(explanation);
             }
             console.log(`stdout: ${stdout}`);
             resolve(explanation);  // Resolve with explanation after execution
