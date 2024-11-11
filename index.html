@@ -73,7 +73,7 @@
     const apiSrc = '10.0.0.11';
 
 
-    function renderLoadingBar(progress, duration) {
+    function renderLoadingBar(progress, duration, passOne) {
         const totalBars = 30;
         const filledBars = Math.round((progress / duration) * totalBars);
         const emptyBars = totalBars - filledBars;
