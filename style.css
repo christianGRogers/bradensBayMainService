@@ -4,8 +4,8 @@
 body {
   background: linear-gradient(45deg, #0E27FC 0%, #04071A 100%);
   font-family: Ubuntu;
-  color: white; /* Set default text color to white */
-  margin: 0; /* Remove default margin */
+  color: white;
+  margin: 0;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -37,7 +37,7 @@ button {
   width: 100%;
   padding: 10px;
   margin: 10px 0;
-  border-radius: 25px; /* Make buttons rounded */
+  border-radius: 25px;
   border: 1px solid #ddd;
 }
 
@@ -60,7 +60,7 @@ button:hover {
   display: none;
 }
 
-/* Additional styles for the terminal if needed */
+/* Additional styles for the terminal */
 #container {
   display: flex;
   justify-content: center;
@@ -136,35 +136,49 @@ button:hover {
   background: black;
   font-family: 'Ubuntu Mono';
   height: calc(100% - 30px);
-  padding-top: 2px;
+  padding-top: 60px; /* Adjust padding for fixed logo */
   margin-top: -1px;
-  color: white; /* Set default text color to white */
+  color: white;
+  overflow-y: auto; /* Make terminal body scrollable */
+  position: relative;
+}
+
+/* Logo and signup fixed at top */
+#logosignup {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background-color: black; /* Match the terminal background */
+  z-index: 10;
+  padding: 10px 0;
+  text-align: center;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Optional shadow for separation */
 }
 
 #terminal__prompt {
   display: flex;
-  align-items: center; /* Ensures all child elements are aligned vertically */
-  font-size: 14px; /* Ensure consistent font size */
+  align-items: center;
+  font-size: 14px;
 }
 
 #terminal__prompt--user {
-  color: #7eda28; /* Set user text color to green */
+  color: #7eda28;
 }
 
 #terminal__prompt--location,
 #terminal__prompt--bling,
 #terminal__input {
-  color: white; /* Set text color to white */
+  color: white;
   font-family: 'Ubuntu Mono';
-  margin-left: 6px; /* Match terminal prompt spacing */
+  margin-left: 6px;
 }
 
 #terminal__input {
   background-color: black;
   border: none;
   padding: 2px 8px;
-  width: auto; /* Let flexbox handle the width */
-  flex-grow: 1; /* Allow input to grow and fill remaining space */
+  width: auto;
+  flex-grow: 1;
 }
 
 #terminal__input:focus {
