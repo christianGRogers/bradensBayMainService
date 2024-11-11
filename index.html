@@ -73,44 +73,44 @@
     const apiSrc = '10.0.0.11';
 
 
-    function renderLoadingBar(progress, duration, passOne) {
+    function renderLoadingBar(progress, duration, loadingBarElement) {
         const totalBars = 30;
         const filledBars = Math.round((progress / duration) * totalBars);
         const emptyBars = totalBars - filledBars;
         const bar = `[${'#'.repeat(filledBars)}${'-'.repeat(emptyBars)}]`;
 
-        const terminalBody = document.getElementById("terminal__body");
-        let loadingBarElement = document.getElementById("loading-bar");
-        if(passOne){
-            loadingBarElement = document.createElement("div");
-            loadingBarElement.classList.add("terminal__output", "loading-bar");
-            terminalBody.insertBefore(loadingBarElement, document.getElementById("terminal__prompt"));
-        }
-
-
+        // Update the loading bar element's content
         loadingBarElement.innerHTML = `<span>${bar}</span>`;
-
-        // Remove the loading bar after the progress reaches the duration
-        if (progress >= duration) {
-            setTimeout(() => {
-                loadingBarElement.remove();
-            }, 500); // Optional delay for visual smoothness
-        }
     }
 
-    // Starts the loading process with a specified countdown duration.
+// Starts the loading process with a specified countdown duration.
     async function startLoading(duration) {
+        // Get the terminal body and create a new loading bar element
+        const terminalBody = document.getElementById("terminal__body");
+        let loadingBarElement = document.createElement("div");
+        loadingBarElement.classList.add("terminal__output", "loading-bar");
+
+        // Insert the new loading bar element before the prompt
+        terminalBody.insertBefore(loadingBarElement, document.getElementById("terminal__prompt"));
+
+        // Initialize progress and start the interval for loading
         let currentTime = 0;
-        var passOne =true;
         const interval = setInterval(() => {
             currentTime++;
-            renderLoadingBar(currentTime, duration, passOne);
-            passOne = false;
+            renderLoadingBar(currentTime, duration, loadingBarElement);
+
+            // Stop the interval once progress reaches duration
             if (currentTime >= duration) {
                 clearInterval(interval);
+
+                // Remove the loading bar element after a short delay for smoothness
+                setTimeout(() => {
+                    loadingBarElement.remove();
+                }, 500);
             }
         }, 1000);
     }
+
 
 
     document.addEventListener("DOMContentLoaded", () => {
