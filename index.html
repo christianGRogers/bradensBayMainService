@@ -81,14 +81,11 @@
         const bar = `[${'#'.repeat(filledBars)}${'-'.repeat(emptyBars)}]`;
 
         const terminalBody = document.getElementById("terminal__body");
-        let loadingBarElement = terminalBody.querySelector(".loading-bar");
 
-        // Create the loading bar element if it doesn't exist
-        if (!loadingBarElement) {
-            loadingBarElement = document.createElement("div");
-            loadingBarElement.classList.add("terminal__output", "loading-bar");
-            terminalBody.insertBefore(loadingBarElement, document.getElementById("terminal__prompt"));
-        }
+        loadingBarElement = document.createElement("div");
+        loadingBarElement.classList.add("terminal__output", "loading-bar");
+        terminalBody.insertBefore(loadingBarElement, document.getElementById("terminal__prompt"));
+
 
         loadingBarElement.innerHTML = `<span>${bar}</span>`;
 
