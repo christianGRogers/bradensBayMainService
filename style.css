@@ -146,7 +146,7 @@ button:hover {
 
 /* Logo and signup fixed at top */
 #logosignup {
-  /* position: fixed; */
+  position: top;
   top: 0;
   width: 100%;
   background-color: black; /* Match the terminal background */
