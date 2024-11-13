@@ -136,7 +136,7 @@ button:hover {
   background: black;
   font-family: 'Ubuntu Mono';
   height: calc(100% - 30px);
-  padding-top: 60px; /* Adjust padding for fixed logo */
+  padding-top: 100px; /* Increased padding to make space for #logosignup */
   margin-top: -1px;
   color: white;
   position: relative;
@@ -145,19 +145,32 @@ button:hover {
 }
 
 /* Logo and signup fixed at top */
-
 #logosignup {
-
-  width: 100%;
+  width: calc(100% - 20px); /* Allow padding from edges */
   background-color: black; /* Match the terminal background */
-  /* padding: 10px 0; */
   text-align: left;
   position: absolute;
   top: 10px;
   left: 10px;
-  text-align: left;
-  z-index: 10; 
+  z-index: 10;
 }
+
+#logosignup img {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 10px; /* Space between logo and signup link */
+}
+
+#logosignup a {
+  color: #00ff00; /* Adjust link color */
+  text-decoration: none;
+  font-weight: bold;
+}
+
+#logosignup a:hover {
+  text-decoration: underline;
+}
+
 
 #terminal__prompt {
   display: flex;
