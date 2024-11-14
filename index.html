@@ -68,7 +68,6 @@
     let vmName = false;  
 
     const totalBars = 30; 
-    const apiSrc = 'bradensbay.com';
 
 
     function renderLoadingBar(progress, duration, loadingBarElement) {
@@ -126,7 +125,7 @@
             }
         });
         async function executeCommand(prompt) {
-            const apiUrl = 'http://'+apiSrc+ ':3003/execute';
+            const apiUrl = 'https://run-prompt.bradensbay.com/execute';
 
             const requestBody = {
                 uid: uid,
@@ -151,7 +150,7 @@
                 const data = await response.json();
                 console.log('Response from server:', data.message);
                 displayOutput(data.message);
-                displayOutput("<a href='http://"+apiSrc+":81/"+email.split('@')[0]+"'' target='_blank'>view site</a>");
+                displayOutput("<a href='https://user-endpoint.bradensbay.com/"+email.split('@')[0]+"'' target='_blank'>view site</a>");
                 const terminalBody = document.getElementById('terminal__body');
                 terminalBody.scrollTop = terminalBody.scrollHeight;
             } catch (error) {
@@ -199,7 +198,7 @@
                 return;
             }
 
-            fetch('http://'+apiSrc+ ':3002/addkey', {
+            fetch('https://update-key.bradensbay.com/addkey', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -250,7 +249,7 @@
                 email: email
             };
 
-            fetch('http://'+apiSrc+ ':3001/endpoint', {
+            fetch('start-vm.bradensbay.com/endpoint', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
