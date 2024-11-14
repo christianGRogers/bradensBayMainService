@@ -1,23 +1,105 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <title>title</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation for Bradensbay Website Builder</title>
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu|Ubuntu+Mono" rel="stylesheet">
+    <style>
+        /* General styles */
+        body {
+            background: linear-gradient(45deg, #0E27FC 0%, #04071A 100%);
+            font-family: 'Ubuntu', sans-serif;
+            color: white;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #FFFFFF;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h4 {
+            color: #FFD700;
+            margin-top: 20px;
+        }
+
+        p, ul {
+            max-width: 600px;
+            text-align: left;
+            line-height: 1.6;
+        }
+
+        a {
+            color: #4DA8DA;
+            text-decoration: underline;
+        }
+
+        a:hover {
+            color: #00CFFF;
+        }
+
+        /* Terminal styles */
+        #terminal {
+            width: 80vw;
+            max-width: 700px;
+            background-color: black;
+            color: white;
+            font-family: 'Ubuntu Mono', monospace;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        #terminal__bar {
+            background: linear-gradient(#504b45, #3c3b37);
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            color: #D5D0CE;
+        }
+
+        #terminal__body {
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
 </head>
 <body>
-    <h1>Documentation For Bradensbay Website Builder</h1>
-    
-    <h4>VM-Context</h4>
-    when you make an acount with bradensbay you are given an ubuntu vm instance. All ai prompts are given to the gemini api and that ai is given free rein over that vm with certain guardrails. You have the oprotunity to ssh to your vm to make chnages or setup your own code etc. Most librays can also be installed and you can give your ai this context in you prompts ie "Do this knowing that abc software is alredy installed". However if your are having trouble you may need to enter the command export http_proxy=http://10.0.0.11:3128; to connect to the proxy.
+    <h1>Documentation for Bradensbay Website Builder</h1>
 
-    <h4>How to connect</h4>
-    You will require putty and putty gen installed or some equivlent sogtware install here. Never install from a insecure source to prevent evsdroping.
+    <div id="terminal">
+        <div id="terminal__bar">
+            <span style="margin-right: 8px;">🔴🟡🟢</span> Documentation Terminal
+        </div>
+        <div id="terminal__body">
+            <h4>VM-Context</h4>
+            <p>When you create an account with Bradensbay, you are provided with an Ubuntu VM instance. All AI prompts are processed by the Gemini API, giving the AI controlled access to your VM with certain guardrails. You can SSH into your VM to make changes or set up your own code. You may also pre-install libraries and inform the AI, for instance: "Do this knowing that XYZ software is already installed."</p>
+            <p>If you encounter connectivity issues, you might need to use the command:</p>
+            <pre>export http_proxy=http://10.0.0.11:3128;</pre>
 
-    First generate your key of type RSA 2048 bits. Then hit generate and move your mose around to get a nadom seed.
-    Save your private key somwhere you will remembere. Ctrl -C your public key and open the bradensbay console type the command addkey and you will be prompted to enter your public key. Ctrl-V your public key hit okay. Now open putty and type the domain bradensbay.com for the port specify the port that was displayed when you loged on ie ssh domain and port: bradensbay.com:your-port
-    vm user password: your-vm's password. now go to ssh->auth->credentals and browse for your private key that you generated prior. click connect and enter the user-name given to your vm ie email: username@example.com. Select trust connection when asked. Special note the our-vm's password mentioned earlyer is the user password only for your vm which is randomy generated which is used for sudo privlage in your vm. 
+            <h4>How to Connect</h4>
+            <p>You’ll need <a href="https://www.putty.org/">PuTTY</a> and PuTTYgen (or similar SSH tools) installed. Always download from a secure source to avoid eavesdropping.</p>
+            <ol>
+                <li>Generate an RSA 2048-bit key in PuTTYgen. Move your mouse over the blank area to create a random seed. Save your private key securely and copy your public key.</li>
+                <li>Log in to Bradensbay and use the command <code>addkey</code> to add your public key.</li>
+                <li>In PuTTY, set the host as <code>bradensbay.com</code> and specify the port displayed in your console.</li>
+                <li>Navigate to <strong>SSH &gt; Auth &gt; Credentials</strong>, and select your private key.</li>
+                <li>Connect, enter your username, and trust the connection if prompted.</li>
+            </ol>
+            <p>Note: The user password generated for your VM is only for sudo privileges.</p>
 
-    <h4>How to use</h4>
-
+            <h4>How to Use</h4>
+            <p>Simply ask the AI to perform tasks related to website creation or management on your Ubuntu VM with public access. For instance, try: <em>“Create a portfolio website for [Your Name] with my LinkedIn profile at [Your LinkedIn Link].”</em></p>
+            <p>For custom domain DNS forwarding, please contact <a href="mailto:christian@bradensbay.com">christian@bradensbay.com</a>.</p>
+        </div>
+    </div>
 </body>
 </html>
