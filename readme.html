@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>title</title>
+</head>
+<body>
+    <h1>Documentation For Bradensbay Website Builder</h1>
+    
+    <h4>VM-Context</h4>
+    when you make an acount with bradensbay you are given an ubuntu vm instance. All ai prompts are given to the gemini api and that ai is given free rein over that vm with certain guardrails. You have the oprotunity to ssh to your vm to make chnages or setup your own code etc. Most librays can also be installed and you can give your ai this context in you prompts ie "Do this knowing that abc software is alredy installed". However if your are having trouble you may need to enter the command export http_proxy=http://10.0.0.11:3128; to connect to the proxy.
+
+    <h4>How to connect</h4>
+    You will require putty and putty gen installed or some equivlent sogtware install here. Never install from a insecure source to prevent evsdroping.
+
+    First generate your key of type RSA 2048 bits. Then hit generate and move your mose around to get a nadom seed.
+    Save your private key somwhere you will remembere. Ctrl -C your public key and open the bradensbay console type the command addkey and you will be prompted to enter your public key. Ctrl-V your public key hit okay. Now open putty and type the domain bradensbay.com for the port specify the port that was displayed when you loged on ie ssh domain and port: bradensbay.com:your-port
+    vm user password: your-vm's password. now go to ssh->auth->credentals and browse for your private key that you generated prior. click connect and enter the user-name given to your vm ie email: username@example.com. Select trust connection when asked. Special note the our-vm's password mentioned earlyer is the user password only for your vm which is randomy generated which is used for sudo privlage in your vm. 
+
+    <h4>How to use</h4>
+
+</body>
+</html>
