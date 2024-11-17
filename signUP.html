@@ -1,22 +1,145 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <link rel="icon" type="image/png" href="https://img.icons8.com/ios-filled/50/b.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Signup for bradensbay.com</title>
-    <link rel="stylesheet" type="text/css" href="style.css"/>
+    <link rel="icon" type="image/png" href="https://img.icons8.com/ios-filled/50/b.png">
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu|Ubuntu+Mono&display=swap" rel="stylesheet">
+    <style>
+        /* General body and background styling */
+        body {
+            background: linear-gradient(45deg, #0E27FC 0%, #04071A 100%);
+            font-family: 'Ubuntu', sans-serif;
+            color: white;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            font-size: 15px;
+        }
+
+        h1 {
+            color: #FFFFFF;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        /* Terminal container styling */
+        #terminal {
+            width: 700px;
+            max-width: 100%;
+            background-color: black;
+            color: white;
+            font-family: 'Ubuntu Mono', monospace;
+            border-radius: 10px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        #terminal__bar {
+            max-height: 10px;
+            background: linear-gradient(#504b45, #3c3b37);
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            color: #D5D0CE;
+        }
+
+        .link-group {
+            margin-left: auto;
+            display: flex;
+        }
+
+        .link-group a {
+            color: #4DA8DA;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+
+        .link-group a:hover {
+            color: #00CFFF;
+        }
+
+        #terminal__body {
+            padding: 20px;
+            overflow-y: auto;
+            height: 700px;
+        }
+
+        /* Form styling */
+        form {
+            background: #000000;
+            padding: 20px;
+            border-radius: 5px;
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        input[type="email"],
+        input[type="password"],
+        input[type="text"],
+        button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 25px;
+            border: 1px solid #ddd;
+            font-family: 'Ubuntu Mono', monospace;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #recaptcha-container {
+            margin: 10px 0;
+        }
+
+        #verify-code-form {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-    <form id="signup-form">
-        <h1>Signup</h1>
-        <input type="email" id="email" placeholder="Email" required>
-        <input type="password" id="password" placeholder="Password" required>
-        <button type="submit">Sign Up</button>
-    </form>
-    <div id="recaptcha-container"></div>  
-    <form id="verify-code-form" style="display: none;">
-        <input type="text" id="verification-code" placeholder="Verification Code" required>
-        <button type="submit">Verify Code</button>
-    </form>
+    <div id="terminal">
+        <div id="terminal__bar">
+            <span style="margin-right: 8px;">🔴🟡🟢</span>
+            <span id="bar__user">bradensbay.com</span>
+            <div class="link-group">
+                <a href="#">Help</a>
+                <a href="#">Contact</a>
+            </div>
+        </div>
+        
+        <div id="terminal__body">
+            <h1>Signup</h1>
+            <form id="signup-form">
+                <input type="email" id="email" placeholder="Email" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button type="submit">Sign Up</button>
+            </form>
+
+            <div id="recaptcha-container"></div>  
+
+            <form id="verify-code-form">
+                <input type="text" id="verification-code" placeholder="Verification Code" required>
+                <button type="submit">Verify Code</button>
+            </form>
+        </div>
+    </div>
 
     <script type="module">
         // Import the necessary Firebase functions
@@ -46,33 +169,30 @@
 
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user; // Get the user object, which contains UID and email
+                const user = userCredential.user;
 
                 // Send verification email
                 await sendEmailVerification(user);
-                console.log("Verification email sent.");
                 alert("An email has been sent to your inbox. Please confirm to sign in.");
-
-                //window.location.replace('/bradensBayMainService/');
+                window.location.href = "https://prompt.bradensbay.com";
+                
 
                 // Send the UID and email to the server
-                await fetch('http://99.233.122.60:3001/run-bash-script', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        uid: user.uid,    // Include the UID
-                        email: user.email // Include the email
-                    })
-                });
+                // await fetch('http://99.233.122.60:3001/run-bash-script', {
+                //     method: 'POST',
+                //     headers: {
+                //         'Content-Type': 'application/json'
+                //     },
+                //     body: JSON.stringify({
+                //         uid: user.uid,
+                //         email: user.email
+                //     })
+                // });
             } catch (error) {
                 console.error(error.message);
                 alert("There already exists an account with this email.");
-                //window.location.replace('/bradensBayMainService/signUP.html');
             }
         });
-
 
         // Handle verification code form submission
         document.getElementById('verify-code-form').addEventListener('submit', async (e) => {

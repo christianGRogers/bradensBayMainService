@@ -3,27 +3,92 @@
 
 body {
   background: linear-gradient(45deg, #0E27FC 0%, #04071A 100%);
-  font-family: Ubuntu;
+  font-family: 'Ubuntu', sans-serif;
   color: white;
   margin: 0;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  height: 100vh;
+  padding: 20px;
+  font-size: 15px;
 }
 
 h1 {
-  color: #333;
+  color: #FFFFFF;
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
+
+h4 {
+  color: #FFD700;
+  margin-top: 20px;
+}
+
+p, ul {
+  max-width: 600px;
+  text-align: left;
+  line-height: 1.6;
+}
+
+a {
+  color: #4DA8DA;
+  text-decoration: underline;
+}
+
+a:hover {
+  color: #00CFFF;
+}
+
+#terminal {
+  width: 80vw;
+  max-width: 100%;
+  background-color: black;
+  color: white;
+  font-family: 'Ubuntu Mono', monospace;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  margin-top: 20px;
+  overflow: hidden;
+}
+
+#terminal__bar {
+  max-height: 10px;
+  background: linear-gradient(#504b45, #3c3b37);
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  color: #D5D0CE;
+}
+
+.link-group {
+  margin-left: auto; /* Pushes the link group to the right */
+  display: flex;
+}
+
+.link-group a {
+  color: #7eda28;
+  text-decoration: none;
+}
+
+
+
+
+#terminal__body {
+  padding: 20px;
+  margin-top: 0px;
+  height: 700px;
+  /* max-height: fit-content; */
+  overflow-y: auto;
+}
+
+
 
 form {
   background: #fff;
   padding: 20px;
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  max-width: 400px;
+
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -68,62 +133,6 @@ button:hover {
   height: 100vh;
 }
 
-#terminal {
-  width: 70vw;
-  height: 65vh;
-  box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.5);
-}
-
-#terminal__bar {
-  display: flex;
-  width: 100%;
-  height: 30px;
-  align-items: center;
-  padding: 0 8px;
-  box-sizing: border-box;
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
-  background: linear-gradient(#504b45 0%, #3c3b37 100%);
-}
-
-#bar__buttons {
-  display: flex;
-  align-items: center;
-}
-
-.bar__button {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0;
-  margin-right: 5px;
-  font-size: 8px;
-  height: 12px;
-  width: 12px;
-  box-sizing: border-box;
-  border: none;
-  border-radius: 100%;
-  background: linear-gradient(#7d7871 0%, #595953 100%);
-  text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.2);
-  box-shadow: 0px 0px 1px 0px #41403A, 0px 1px 1px 0px #474642;
-}
-
-.bar__button:hover {
-  cursor: pointer;
-}
-
-.bar__button:focus {
-  outline: none;
-}
-
-#bar__button--exit {
-  background: linear-gradient(#f37458 0%, #de4c12 100%);
-  background-clip: padding-box;
-}
-#bar__button--plus {
-  background: linear-gradient(hsl(103, 78%, 51%) 0%, #19d600 100%);
-  background-clip: padding-box;
-}
 
 #bar__user {
   color: #d5d0ce;
@@ -132,40 +141,10 @@ button:hover {
   line-height: 15px;
 }
 
-#terminal__body {
-  background: black;
-  font-family: 'Ubuntu Mono';
-  height: calc(100% - 30px);
-  padding-top: 100px; /* Increased padding to make space for #logosignup */
-  margin-top: -1px;
-  color: white;
-  position: relative;
-  max-height: 400px; /* Adjust the height as needed */
-  overflow-y: auto;
-}
+
 
 /* Logo and signup fixed at top */
-#logosignup {
-  width: calc(100% - 20px); /* Allow padding from edges */
-  background-color: black; /* Match the terminal background */
-  text-align: left;
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 10;
-}
 
-#logosignup img {
-  display: inline-block;
-  vertical-align: middle;
-  margin-right: 10px; /* Space between logo and signup link */
-}
-
-
-
-#logosignup a:hover {
-  text-decoration: underline;
-}
 
 
 #terminal__prompt {
@@ -176,6 +155,7 @@ button:hover {
 
 #terminal__prompt--user {
   color: #7eda28;
+  margin-left: 30px;
 }
 
 #terminal__prompt--location,
