@@ -1,4 +1,6 @@
 #/bin/bash
+sudo git clone https://github.com/christianGRogers/bradensbay-start-vm-api
+sudo git clone 
 sudo chmod +x newUserSchedular.sh
 sudo chmod +x newUser.sh
 sudo npm install @google/generative-ai
