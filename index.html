@@ -65,7 +65,8 @@
     let email = "";
     let contPwd = "";
     let state = "awaitingEmail";
-    let vmName = false;  
+    let vmName = false;
+    let loadVmError = "";
 
     const totalBars = 30; 
 
@@ -262,6 +263,7 @@
             })
             .catch(error => {
                 console.error('Error:', error);
+                loadVmError = error.message;
             });
         }
 
@@ -281,8 +283,9 @@
                         contPwd =password;
                     } else {
                         if (checkOne) {
-                            displayOutput("Since this is your first login, your VM is being initialized, which could take up to 2 minutes. Stay on this window and don't refresh.");
+                            displayOutput("Since this is your first login, your VM is being initialized, which could take up to 2 minutes. Stay on this window and don't refresh. If your vm details don't show within 3-minutes contact support 705-795-6508.");
                             startLoading(100);
+                            displayOutput(loadVmError);
                             checkOne = false;
                         }
                         await new Promise(resolve => setTimeout(resolve, 10000));
