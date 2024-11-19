@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bradensbay Website Builder Documentation</title>
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu|Ubuntu+Mono" rel="stylesheet">
+    <style>
+        /* General styles */
+        body {
+            background: linear-gradient(45deg, #0E27FC 0%, #04071A 100%);
+            font-family: 'Ubuntu', sans-serif;
+            color: white;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Terminal styles */
+        #terminal {
+            width: 80vw;
+            max-width: 1500px;
+            background-color: black;
+            color: white;
+            font-family: 'Ubuntu Mono', monospace;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 90%;
+        }
+
+        #terminal__bar {
+            background: linear-gradient(#504b45, #3c3b37);
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            color: #D5D0CE;
+            font-size: 0.9rem;
+        }
+
+        #terminal__body {
+            padding: 20px;
+            overflow-y: auto;
+            font-size: 1.1rem;
+            line-height: 1.5;
+            color: #00FF00;
+            white-space: pre-wrap;
+            position: relative;
+            height: 100%;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 20px;
+            background-color: #00FF00;
+            margin-left: 5px;
+            animation: blink 0.8s steps(2, start) infinite;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+
+        /* Link styles */
+        a {
+            color: #4DA8DA;
+            text-decoration: underline;
+            font-weight: bold;
+        }
+
+        a:hover {
+            color: #00CFFF;
+        }
+    </style>
+</head>
+<body>
+    <div id="terminal">
+        <div id="terminal__bar">
+            <span style="margin-right: 8px;">🔴🟡🟢</span> Documentation Terminal
+        </div>
+        <div id="terminal__body">
+            <span id="typing-text"></span>
+            <span class="cursor"></span>
+            <span id="link"></span>
+            
+        </div>
+    </div>
+
+    <script>
+        const content = `
+you@bradensbay.com:~$ Welcome to Bradensbay Website Builder!
+
+you@bradensbay.com:~$ Bradensbay empowers you to create fully functional websites with a single sentence.
+                     Powered by Gemini 1.5 Pro, Google’s latest AI model, this tool transforms
+                     your ideas into reality with unmatched speed and accuracy.
+
+you@bradensbay.com:~$ Imagine this:
+                     "Build me a basic game of Snake using JavaScript, CSS, and HTML."
+                     In seconds, you'll have a complete, ready-to-run project at your fingertips.
+
+you@bradensbay.com:~$ Features:
+                     - Instant website creation from natural language prompts.
+                     - Support for interactive apps, games, and blogs.
+                     - AI-driven optimization for modern design principles.
+
+you@bradensbay.com:~$ Why use Bradensbay?
+                     - Save time: No coding experience needed.
+                     - Creativity unleashed: Focus on ideas while we handle the execution.
+                     - Versatile outputs: From static sites to complex web applications.
+
+you@bradensbay.com:~$ What about developers?
+                     : Allows direct VM connection so those with the knowledge can make their own changes.
+
+you@bradensbay.com:~$ How to get started:
+                     Simply describe what you want in plain English, and let Bradensbay do the rest.
+                     Example: "Create a portfolio site with sections for projects, skills, and contact."
+
+you@bradensbay.com:~$ Ready to build?
+        `;
+
+        const typingText = document.getElementById('typing-text');
+        const terminalBody = document.getElementById('terminal__body');
+
+        let index = 0;
+
+        function type() {
+            if (index < content.length) {
+                // Check if the current character is part of an HTML tag
+                if (content[index] === '<') {
+                    const endTagIndex = content.indexOf('>', index);
+                    typingText.innerHTML += content.substring(index, endTagIndex + 1); // Add the tag directly
+                    index = endTagIndex + 1;
+                } else {
+                    typingText.textContent += content[index];
+                    index++;
+                }
+                terminalBody.scrollTop = terminalBody.scrollHeight; // Auto-scroll to bottom
+                setTimeout(type, 0.1); // Adjust speed by changing this value
+            } else {
+                document.querySelector('.cursor').style.display = 'none'; // Remove cursor after typing
+                document.getElementById("link").innerHTML = '<a href="https://prompt.bradenaby.com" target="_blank">Click here to begin your journey.</a>';
+            }
+        }
+
+        type();
+        
+    </script>
+</body>
+</html>
