@@ -13,6 +13,9 @@ body {
   font-size: 15px;
 }
 
+
+
+
 h1 {
   color: #FFFFFF;
   text-align: center;
@@ -186,3 +189,84 @@ button:hover {
   display: block;
   margin-bottom: 20px;
 }
+
+@media (max-width: 600px) {
+
+  #terminal_body{
+    padding: 0px;
+  }
+  #terminal{
+    height: 600px;
+    width: 100%;
+  }
+    
+  #terminal__bar {
+    max-height: 90px;
+    background: linear-gradient(#504b45, #3c3b37);
+    padding: 0px;
+    color: #D5D0CE;
+    flex-direction: column;
+    align-items: start;
+    gap: 5px; /* Add spacing between rows */
+}
+
+.top-row {
+    display: flex;
+    justify-content: space-between; /* Ensure dots and username are on the same line */
+    
+}
+.bar__user{
+  content: "";
+}
+
+.bar-icons {
+    font-size: 1.2rem; /* Adjust icon size if needed */
+}
+
+
+.link-group {
+  margin-left: inherit;
+}
+
+.link-group a {
+    color: #7eda28;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.link-group a:hover {
+    text-decoration: underline;
+}
+
+}
+    /* Notification container styling */
+    #mobile-notification {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #333;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 5px;
+      font-size: 14px;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      display: none; /* Hidden by default */
+    }
+
+    /* Button styling */
+    #mobile-notification button {
+      margin-left: 10px;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 3px;
+      background-color: #007BFF;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    #mobile-notification button:hover {
+      background-color: #0056b3;
+    }

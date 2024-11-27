@@ -9,10 +9,15 @@
     <link rel="stylesheet" type="text/css" href="style.css"/>
 </head>
 <body>
+    <div id="mobile-notification">
+        Hello, you are using a mobile device. This is still a beta app and will perform better in a desktop environment.
+        <button id="dismiss-button">Okay</button>
+      </div>
     <div id="terminal">
         <div id="terminal__bar">
-            <span style="margin-right: 8px;">🔴🟡🟢</span> 
+            <span id="bar__icons" style="margin-right: 8px;">🔴🟡🟢</span> 
             <p id="bar__user">user@bradensbay.com ~</p>
+            
             <div class="link-group">
               <a href="https://signup.bradensbay.com" style="color: #7eda28;"> Make_an_account </a>
               <a href="readme.html" target='_blank' style="color: #7eda28; margin-left: 16px;"> Help </a>
@@ -40,13 +45,32 @@
 
 
     <script type="module">
+        function isMobileDevice() {
+            return /iPhone|iPad|iPod|Android|BlackBerry|Windows Phone/i.test(navigator.userAgent);
+        }
+
+        // Show notification if on a mobile device
+        window.addEventListener('load', () => {
+            if (isMobileDevice()) {
+            const notification = document.getElementById('mobile-notification');
+            notification.style.display = 'block';
+            
+            // Add event listener to the "Okay" button
+            const dismissButton = document.getElementById('dismiss-button');
+            dismissButton.addEventListener('click', () => {
+                notification.style.display = 'none';
+            });
+            }
+        });
+
+
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
     import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 
     // Firebase configuration
     const firebaseConfig = {
-        apiKey: "AIzaSyDmdf8NhoFAzXKGuBWYq5XoDrM5eNClgOg",
+        apiKey: "AIzaSyDmdf8NhoFAzXKGuBWYq5XoDrM5eNClgOg", ///this is not a paid api key lol only for login sorry to get your hopes up hacker
         authDomain: "bradensbay-1720893101514.firebaseapp.com",
         databaseURL: "https://bradensbay-1720893101514-default-rtdb.firebaseio.com/",
         projectId: "bradensbay-1720893101514",
@@ -81,27 +105,17 @@
         loadingBarElement.innerHTML = `<span>${bar}</span>`;
     }
 
-// Starts the loading process with a specified countdown duration.
     async function startLoading(duration) {
-        // Get the terminal body and create a new loading bar element
         const terminalBody = document.getElementById("terminal__body");
         let loadingBarElement = document.createElement("div");
         loadingBarElement.classList.add("terminal__output", "loading-bar");
-
-        // Insert the new loading bar element before the prompt
         terminalBody.insertBefore(loadingBarElement, document.getElementById("terminal__prompt"));
-
-        // Initialize progress and start the interval for loading
         let currentTime = 0;
         const interval = setInterval(() => {
             currentTime++;
             renderLoadingBar(currentTime, duration, loadingBarElement);
-
-            // Stop the interval once progress reaches duration
             if (currentTime >= duration) {
                 clearInterval(interval);
-
-                // Remove the loading bar element after a short delay for smoothness
                 setTimeout(() => {
                     loadingBarElement.remove();
                 }, 500);
@@ -230,7 +244,10 @@
                     document.getElementById("terminal__prompt--location").innerText = `~`;
                     document.getElementById("terminal__prompt--bling").innerText = `$`;
                     document.getElementById("terminal__prompt--user").innerText = email;
-                    document.getElementById("bar__user").innerText = email;
+                    if(!document.getElementById("bar__user").displayOutput =="none"){
+                        document.getElementById("bar__user").innerText = email;
+                    }
+                    // document.getElementById("bar__user").innerText = email;
                     sendUserData(uid, email);
                     console.log("uid: ", uid);
                     const idToken = await userCredential.user.getIdToken();
