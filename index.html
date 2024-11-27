@@ -46,10 +46,7 @@
 
     <script type="module">
         function isMobileDevice() {
-            return (
-                /iPhone|iPad|iPod|Android|BlackBerry|Windows Phone/i.test(navigator.userAgent) ||
-                (window.innerWidth <= 768 && window.innerHeight <= 1024) // Typical mobile screen sizes
-            );
+            return /iPhone|iPad|iPod|Android|BlackBerry|Windows Phone/i.test(navigator.userAgent);
         }
 
         // Show notification if on a mobile device
