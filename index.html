@@ -15,7 +15,7 @@
       </div>
     <div id="terminal">
         <div id="terminal__bar">
-            <span id="bar__icons" style="margin-right: 8px;">🔴🟡🟢</span> 
+            <!-- <span id="bar__icons" style="margin-right: 8px;">🔴🟡🟢</span>  -->
             <p id="bar__user">user@bradensbay.com ~</p>
             
             <div class="link-group">
@@ -244,9 +244,9 @@
                     document.getElementById("terminal__prompt--location").innerText = `~`;
                     document.getElementById("terminal__prompt--bling").innerText = `$`;
                     document.getElementById("terminal__prompt--user").innerText = email;
-                    if(!document.getElementById("bar__user").displayOutput =="none"){
-                        document.getElementById("bar__user").innerText = email;
-                    }
+                    
+                    document.getElementById("bar__user").innerText = email;
+                    
                     // document.getElementById("bar__user").innerText = email;
                     sendUserData(uid, email);
                     console.log("uid: ", uid);

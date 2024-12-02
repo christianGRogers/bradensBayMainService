@@ -2,16 +2,39 @@
 @import url('https://fonts.googleapis.com/css?family=Ubuntu+Mono');
 
 body {
-  background: linear-gradient(45deg, #0E27FC 0%, #04071A 100%);
+  background-color: black; /* Removes the blue gradient and sets it to black */
   font-family: 'Ubuntu', sans-serif;
   color: white;
   margin: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
+  justify-content: center; /* Center the terminal vertically and horizontally */
+  height: 100vh; /* Ensure it takes up the full viewport height */
   font-size: 15px;
+  overflow: hidden; /* Prevent scrolling */
+  font-size: calc(1.5vw + 10px); /* Scales font size with screen size */
 }
+
+#terminal {
+  width: 100%; /* Full screen width */
+  height: 100%; /* Full screen height */
+  background-color: black;
+  color: white;
+  font-family: 'Ubuntu Mono', monospace;
+  border-radius: 0; /* Remove border radius */
+  box-shadow: none; /* Remove shadow */
+  margin: 0; /* Remove top margin */
+  overflow: hidden;
+}
+
+#terminal__body {
+  padding: 20px;
+  margin: 0; /* Remove margin */
+  height: calc(100% - 60px); /* Adjust height to exclude the terminal bar */
+  overflow-y: auto;
+}
+
 
 
 
@@ -42,20 +65,10 @@ a:hover {
   color: #00CFFF;
 }
 
-#terminal {
-  width: 80vw;
-  max-width: 100%;
-  background-color: black;
-  color: white;
-  font-family: 'Ubuntu Mono', monospace;
-  border-radius: 10px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-  margin-top: 20px;
-  overflow: hidden;
-}
+
 
 #terminal__bar {
-  max-height: 10px;
+  max-height: calc(1.5vw + 10px);
   background: linear-gradient(#504b45, #3c3b37);
   padding: 8px;
   display: flex;
@@ -76,13 +89,7 @@ a:hover {
 
 
 
-#terminal__body {
-  padding: 20px;
-  margin-top: 0px;
-  height: 700px;
-  /* max-height: fit-content; */
-  overflow-y: auto;
-}
+
 
 
 
@@ -91,7 +98,7 @@ form {
   padding: 20px;
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-
+  font-size: calc(1.5vw + 10px);
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -139,8 +146,7 @@ button:hover {
 
 #bar__user {
   color: #d5d0ce;
-  margin-left: 6px;
-  font-size: 14px;
+  margin-left: 0px;
   line-height: 15px;
 }
 
@@ -153,7 +159,6 @@ button:hover {
 #terminal__prompt {
   display: flex;
   align-items: center;
-  font-size: 14px;
 }
 
 #terminal__prompt--user {
@@ -175,6 +180,7 @@ button:hover {
   padding: 2px 8px;
   width: auto;
   flex-grow: 1;
+  font-size: calc(1.5vw + 10px);
 }
 
 #terminal__input:focus {
