@@ -50,11 +50,7 @@ h4 {
   margin-top: 20px;
 }
 
-p, ul {
-  max-width: 600px;
-  text-align: left;
-  line-height: 1.6;
-}
+
 
 a {
   color: #4DA8DA;

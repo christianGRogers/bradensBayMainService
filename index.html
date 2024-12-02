@@ -31,7 +31,7 @@
                     <img src="logo.png" alt="logo" style="width:200px; height:50px;">
                 </div>
                 <div id="terminal__prompt">
-                    <span id="terminal__prompt--user">username:</span>
+                    <span id="terminal__prompt--user">email:</span>
                     <span id="terminal__prompt--location">~</span>
                     <span id="terminal__prompt--bling">$</span>
                     <input type="text" id="terminal__input" autofocus>
@@ -256,7 +256,7 @@
                 .catch((error) => {
                     displayOutput("Login failed: "+ error.message);
                     state = 'awaitingEmail';
-                    document.getElementById("terminal__prompt--user").innerText = "username:";
+                    document.getElementById("terminal__prompt--user").innerText = "email:";
                     
                 });
         }
