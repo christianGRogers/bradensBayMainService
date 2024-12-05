@@ -176,7 +176,7 @@
 
         function processCommand(command) {
             if (state === "awaitingEmail") {
-                email = command;
+                email = command.toLowerCase();;
                 state = "awaitingPassword";
                 document.getElementById("terminal__prompt--user").innerText = "password:";
                 document.getElementById('terminal__input').type = 'password';
