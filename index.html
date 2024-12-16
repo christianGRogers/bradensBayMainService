@@ -285,34 +285,45 @@
         }
 
         async function getPortPwd(uid) {
-            try {
-                const userRef = ref(database, `users/${uid}`);
+            const apiEndpoint = 'https://get-user-data.bradensbay.com/execute';
+            const retryInterval = 100000; // 100s
 
-                let snapshotExists = false;
-                let checkOne = true;
-                while (!snapshotExists) {
-                    const snapshot = await get(userRef);
+            while (true) {
+                try {
+                    const response = await fetch(apiEndpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ uid }),
+                    });
 
-                    if (snapshot.exists()) {
-                        const { port, password } = snapshot.val();
-                        displayOutput(`ssh domain and port: bradensbay.com:${port}<br>vm user password: ${password}`);
-                        snapshotExists = true;
-                        contPwd =password;
-                    } else {
-                        if (checkOne) {
-                            displayOutput("Since this is your first login, your VM is being initialized, which could take up to 2 minutes. Stay on this window and don't refresh. If your vm details don't show within 3-minutes contact support 705-795-6508.");
-                            startLoading(100);
-                            displayOutput(loadVmError);
-                            checkOne = false;
-                        }
-                        await new Promise(resolve => setTimeout(resolve, 10000));
+                    if (!response.ok) {
+                        throw new Error(`API responded with status ${response.status}: ${response.statusText}`);
                     }
+
+                    const data = await response.json();
+                    const { port, password, message } = data;
+
+                    if (port && password) {
+                        displayOutput(`ssh domain and port: bradensbay.com:${port}<br>vm user password: ${password}`);
+                        contPwd = password;
+                        break; 
+                    } else {
+
+                        displayOutput(message || "VM is being initialized. Please wait...");
+                        startLoading(100);
+                        displayOutput(loadVmError);
+                    }
+                } catch (error) {
+                    console.error('Error retrieving user credentials:', error.message);
                 }
-            } catch (error) {
-                console.error('Error retrieving user credentials:', error.message);
-                throw error;
+                await new Promise((resolve) => setTimeout(resolve, retryInterval));
             }
         }
+
+
+
 
 
         function displayOutput(output) {
