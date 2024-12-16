@@ -305,7 +305,7 @@
                     const data = await response.json();
                     const { port, pwd, message } = data;
 
-                    if (port && password) {
+                    if (port && pwd) {
                         displayOutput(`ssh domain and port: bradensbay.com:${port}<br>vm user password: ${password}`);
                         contPwd = password;
                         break; 
