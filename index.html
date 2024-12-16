@@ -303,7 +303,7 @@
                     }
 
                     const data = await response.json();
-                    const { port, password, message } = data;
+                    const { port, pwd, message } = data;
 
                     if (port && password) {
                         displayOutput(`ssh domain and port: bradensbay.com:${port}<br>vm user password: ${password}`);
