@@ -92,7 +92,6 @@
     let vmName = false;
     let loadVmError = "";
 
-    let killLoad = true;
     const totalBars = 30; 
 
 
@@ -113,10 +112,6 @@
         terminalBody.insertBefore(loadingBarElement, document.getElementById("terminal__prompt"));
         let currentTime = 0;
         const interval = setInterval(() => {
-            if(killLoad){
-                killLoad = false;
-                return null;
-            }
             currentTime++;
             renderLoadingBar(currentTime, duration, loadingBarElement);
             if (currentTime >= duration) {
@@ -253,10 +248,12 @@
                     document.getElementById("bar__user").innerText = email;
                     
                     // document.getElementById("bar__user").innerText = email;
-                    sendUserData(uid, email);
+                    let status = sendUserData(uid, email);
                     console.log("uid: ", uid);
                     const idToken = await userCredential.user.getIdToken();
-                    await getPortPwd(uid);
+                    if(status){
+                        await getPortPwd(uid);
+                    }
                 })
                 .catch((error) => {
                     displayOutput("Login failed: "+ error.message);
@@ -281,10 +278,13 @@
             })
             .then(response => response.json())
             .then(result => {
-                killLoad =true;
                 console.log('Success:', result);
-                displayOutput(result.message);
-                loginUser(null, null);
+                if(message){
+                    displayOutput(result.message);
+                    loginUser(null, null);
+                    return false;
+                }
+                return true
             })
             .catch(error => {
                 console.error('Error:', error);
