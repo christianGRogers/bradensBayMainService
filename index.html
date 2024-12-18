@@ -251,7 +251,7 @@
                     
                     console.log("uid: ", uid);
                     // const idToken = await userCredential.user.getIdToken();
-                    if(startVm(uid, email)){
+                    if(await startVm(uid, email)){
                         await getUser(uid);
                     }
                 })
@@ -262,7 +262,7 @@
                     
                 });
         }
-        function startVm(uid, email) {
+        async function startVm(uid, email) {
             const data = {
                 uid: uid,
                 email: email
