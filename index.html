@@ -92,6 +92,7 @@
     let vmName = false;
     let loadVmError = "";
 
+    let killLoad = true;
     const totalBars = 30; 
 
 
@@ -112,6 +113,10 @@
         terminalBody.insertBefore(loadingBarElement, document.getElementById("terminal__prompt"));
         let currentTime = 0;
         const interval = setInterval(() => {
+            if(killLoad){
+                killLoad = false;
+                return null;
+            }
             currentTime++;
             renderLoadingBar(currentTime, duration, loadingBarElement);
             if (currentTime >= duration) {
@@ -276,13 +281,13 @@
             })
             .then(response => response.json())
             .then(result => {
+                killLoad =true;
                 console.log('Success:', result);
                 displayOutput(result.message);
                 loginUser(null, null);
             })
             .catch(error => {
                 console.error('Error:', error);
-                
                 loadVmError = error.message;
                 
             });
