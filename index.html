@@ -251,9 +251,15 @@
                     
                     console.log("uid: ", uid);
                     // const idToken = await userCredential.user.getIdToken();
-                    if(await startVm(uid, email)){
+                    var status = await startVm(uid, email);
+                    if(!status){
+                        console.log("not verified or slow network");
+                    }
+                    else{
                         await getUser(uid);
                     }
+                    
+  
                 })
                 .catch((error) => {
                     displayOutput("Login failed: "+ error.message);
@@ -268,7 +274,7 @@
                 email: email
             };
 
-            return fetch('https://start-vm.bradensbay.com/endpoint', {
+            const fetchPromise = fetch('https://start-vm.bradensbay.com/endpoint', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -278,7 +284,7 @@
             .then(response => response.json())
             .then(result => {
                 console.log('Success:', result);
-                if(result.message === "User email is not verified.") {
+                if (result.message === "User email is not verified.") {
                     displayOutput(result.message);
                     loginUser(null, null);
                     return false;
@@ -290,6 +296,10 @@
                 loadVmError = error.message;
                 return false;
             });
+
+            const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve(false), 3000));
+
+            return Promise.race([fetchPromise, timeoutPromise]);
         }
 
 
