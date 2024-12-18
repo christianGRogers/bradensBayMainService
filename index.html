@@ -289,7 +289,7 @@
             .catch(error => {
                 console.error('Error:', error);
                 loadVmError = error.message;
-                
+                return true
             });
         }
 
