@@ -277,12 +277,14 @@
             .then(response => response.json())
             .then(result => {
                 console.log('Success:', result);
+                displayOutput(result.message);
+                loginUser(null, null);
             })
             .catch(error => {
                 console.error('Error:', error);
-                displayOutput(result.message);
+                
                 loadVmError = error.message;
-                loginUser(null, null);
+                
             });
         }
 
