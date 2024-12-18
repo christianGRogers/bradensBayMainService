@@ -248,11 +248,11 @@
                     document.getElementById("bar__user").innerText = email;
                     
                     // document.getElementById("bar__user").innerText = email;
-                    let status = sendUserData(uid, email);
+                    
                     console.log("uid: ", uid);
-                    const idToken = await userCredential.user.getIdToken();
-                    if(status){
-                        await getPortPwd(uid);
+                    // const idToken = await userCredential.user.getIdToken();
+                    if(startVm(uid, email)){
+                        await getUser(uid);
                     }
                 })
                 .catch((error) => {
@@ -263,7 +263,7 @@
                 });
         }
 
-        function sendUserData(uid, email) {
+        function startVm(uid, email) {
             const data = {
                 uid: uid,
                 email: email
@@ -289,11 +289,10 @@
             .catch(error => {
                 console.error('Error:', error);
                 loadVmError = error.message;
-                return true
             });
         }
 
-        async function getPortPwd(uid) {
+        async function getUser(uid) {
             const apiEndpoint = 'https://get-user-data.bradensbay.com/execute';
             const retryInterval = 100000; // 100s
 
