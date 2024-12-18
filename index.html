@@ -279,7 +279,7 @@
             .then(response => response.json())
             .then(result => {
                 console.log('Success:', result);
-                if(message){
+                if(result.message){
                     displayOutput(result.message);
                     loginUser(null, null);
                     return false;
