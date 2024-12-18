@@ -280,7 +280,9 @@
             })
             .catch(error => {
                 console.error('Error:', error);
+                displayOutput(result.message);
                 loadVmError = error.message;
+                loginUser(null, null);
             });
         }
 
