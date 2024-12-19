@@ -83,6 +83,7 @@
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    auth.setPersistence('none');
     const database = getDatabase(app);
 
     let uid = "";
