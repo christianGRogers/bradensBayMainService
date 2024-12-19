@@ -252,9 +252,13 @@
                     console.log("uid: ", uid);
                     // const idToken = await userCredential.user.getIdToken();
                     var status = await startVm(uid, email);
-                    if(!status){
-                        console.log("not verified or slow network");
+                    if (!status) {
+                        displayOutput("not verified or slow network");
+                        setTimeout(() => {
+                            location.reload(); 
+                        }, 5000); 
                     }
+
                     else{
                         await getUser(uid);
                     }
