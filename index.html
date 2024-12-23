@@ -241,6 +241,8 @@
             signInWithEmailAndPassword(auth, email, password)
                 .then(async (userCredential) => {
                     uid = userCredential.user.uid;
+                    const user = userCredential.user;
+                    const idToken = await user.getIdToken();
                     state = "loggedIn";
                     document.getElementById("terminal__prompt--location").innerText = `~`;
                     document.getElementById("terminal__prompt--bling").innerText = `$`;
@@ -261,7 +263,7 @@
                     }
 
                     else{
-                        await getUser(uid);
+                        await getUser(uid, idToken);
                     }
                     
   
@@ -308,7 +310,7 @@
         }
 
 
-        async function getUser(uid) {
+        async function getUser(uid, idToken) {
             const apiEndpoint = 'https://get-user-data.bradensbay.com/execute';
             const retryInterval = 100000; // 100s
 
@@ -319,7 +321,7 @@
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify({ uid }),
+                        body: JSON.stringify({ uid, idToken }),
                     });
 
                     if (!response.ok) {
