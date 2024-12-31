@@ -234,7 +234,7 @@
                 }
 
                 const result = await response.json();
-                const uid = result.uid;
+                uid = result.uid;
 
                 // Update UI to reflect logged-in state
                 state = "loggedIn";
