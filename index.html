@@ -321,12 +321,17 @@
                     if (port && pwd) {
                         displayOutput(`ssh domain and port: bradensbay.com:${port}<br>vm user password: ${pwd}`);
                         contPwd = pwd;
-                        break; 
+                        break;
                     } else {
-
-                        displayOutput(message);
+                        const newLoginMessage = displayOutput(message); // Capture the created element
                         startLoading(100);
-                        displayOutput(loadVmError);
+
+                        // Remove the message after 100 seconds
+                        setTimeout(() => {
+                            if (newLoginMessage && newLoginMessage.parentNode) {
+                                newLoginMessage.parentNode.removeChild(newLoginMessage);
+                            }
+                        }, 100000); // 100 seconds
                     }
                 } catch (error) {
                     console.error('Error retrieving user credentials:', error.message);
@@ -335,16 +340,14 @@
             }
         }
 
-
-
-
-
         function displayOutput(output) {
             const commandOutput = document.createElement("div");
             commandOutput.classList.add("terminal__output");
             commandOutput.innerHTML = `<span>${output}</span>`;
             terminalBody.insertBefore(commandOutput, document.getElementById("terminal__prompt"));
+            return commandOutput; // Return the created element
         }
+
     });
 </script>
 
