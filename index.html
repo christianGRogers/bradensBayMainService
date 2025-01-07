@@ -290,8 +290,8 @@
                 loadVmError = error.message;
                 return false;
             });
-            //wait 6 seconds for vm response
-            const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve(false), 6000));
+            //wait 10 seconds for vm response
+            const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve(false), 10000));
 
             return Promise.race([fetchPromise, timeoutPromise]);
         }
