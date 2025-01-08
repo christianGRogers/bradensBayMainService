@@ -268,33 +268,38 @@
                 email: email
             };
 
-            const fetchPromise = fetch('https://start-vm.bradensbay.com/endpoint', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(result => {
-                console.log('Success:', result);
-                if (result.message === "User email is not verified.") {
-                    displayOutput(result.message);
-                    loginUser(null, null);
+            try {
+                fetch('https://start-vm.bradensbay.com/endpoint', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(result => {
+                    console.log('Success:', result);
+                    if (result.message === "User email is not verified.") {
+                        displayOutput(result.message);
+                        loginUser(null, null);
+                        return false;
+                    }
+                    return true;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    loadVmError = error.message;
                     return false;
-                }
-                return true;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                loadVmError = error.message;
-                return false;
-            });
-            //wait 10 seconds for vm response
-            const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve(false), 10000));
+                });
 
-            return Promise.race([fetchPromise, timeoutPromise]);
+                // Immediately return true so the process continues
+                return true;
+            } catch (error) {
+                console.error('Unexpected Error:', error);
+                return false;
+            }
         }
+
 
 
         async function getUser(uid) {
