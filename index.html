@@ -325,6 +325,7 @@
 
                     if (port && pwd) {
                         displayOutput(`ssh domain and port: bradensbay.com:${port}<br>vm user password: ${pwd}`);
+                        displayOutput("<a href='https://user-endpoint.bradensbay.com/"+email.split('@')[0]+"'' target='_blank'>user site endpoint</a>");
                         contPwd = pwd;
                         break;
                     } else {
